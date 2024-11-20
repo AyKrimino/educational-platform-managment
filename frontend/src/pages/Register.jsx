@@ -2,6 +2,7 @@ import AuthSidePanel from "../components/AuthSidePanel";
 import { Radio, RadioGroup } from "@headlessui/react";
 import { CiCircleCheck } from "react-icons/ci";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const roles = [
   {
@@ -86,9 +87,9 @@ const Register = () => {
         </button>
         <div className="text-center">
           <p className="text-gray-600 mb-2">Already have an account?</p>
-          <button className="text-blue-600 font-semibold hover:underline">
+          <Link to="/" className="text-blue-600 font-semibold hover:underline">
             Login
-          </button>
+          </Link>
         </div>
       </div>
     </div>
