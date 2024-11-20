@@ -11,7 +11,7 @@ export const register = async (userDetails) => {
     if (response.status === 201) return response.data;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -26,7 +26,7 @@ export const login = async (credentials) => {
     if (response.status === 200) return response.data;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -41,7 +41,7 @@ export const logout = async (credentials) => {
     if (response.status === 205) return;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
 
@@ -58,6 +58,6 @@ export const refresh = async (refreshToken) => {
     if (response.status === 200) return response.data;
   } catch (error) {
     console.log(error);
-    return error;
+    throw error;
   }
 };
