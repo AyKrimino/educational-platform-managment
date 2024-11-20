@@ -7,7 +7,7 @@ import axiosInstance from "./axiosInstance";
  */
 export const register = async (userDetails) => {
   try {
-    const response = await axiosInstance.post("/register", userDetails);
+    const response = await axiosInstance.post("/register/", userDetails);
     if (response.status === 201) return response.data;
   } catch (error) {
     console.log(error);
@@ -22,7 +22,7 @@ export const register = async (userDetails) => {
  */
 export const login = async (credentials) => {
   try {
-    const response = await axiosInstance.post("/login", credentials);
+    const response = await axiosInstance.post("/login/", credentials);
     if (response.status === 200) return response.data;
   } catch (error) {
     console.log(error);
@@ -37,7 +37,7 @@ export const login = async (credentials) => {
  */
 export const logout = async (credentials) => {
   try {
-    const response = await axiosInstance.post("/logout", credentials);
+    const response = await axiosInstance.post("/logout/", credentials);
     if (response.status === 205) return;
   } catch (error) {
     console.log(error);
@@ -52,7 +52,7 @@ export const logout = async (credentials) => {
  */
 export const refresh = async (refreshToken) => {
   try {
-    const response = await axiosInstance.post("/token/refresh", {
+    const response = await axiosInstance.post("/token/refresh/", {
       refresh: refreshToken,
     });
     if (response.status === 200) return response.data;
