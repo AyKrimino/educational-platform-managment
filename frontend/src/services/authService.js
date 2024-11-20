@@ -10,7 +10,9 @@ export const register = async (userDetails) => {
     const response = await axiosInstance.post("/register/", userDetails);
     if (response.status === 201) return response.data;
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
     throw error;
   }
 };
@@ -23,9 +25,11 @@ export const register = async (userDetails) => {
 export const login = async (credentials) => {
   try {
     const response = await axiosInstance.post("/login/", credentials);
-    if (response.status === 200) return response.data;
+    if (response.status === 200) return response;
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
     throw error;
   }
 };
@@ -40,7 +44,9 @@ export const logout = async (credentials) => {
     const response = await axiosInstance.post("/logout/", credentials);
     if (response.status === 205) return;
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
     throw error;
   }
 };
@@ -57,7 +63,9 @@ export const refresh = async (refreshToken) => {
     });
     if (response.status === 200) return response.data;
   } catch (error) {
-    console.log(error);
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
     throw error;
   }
 };
