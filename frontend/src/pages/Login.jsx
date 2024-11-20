@@ -1,4 +1,5 @@
 import AuthSidePanel from "../components/AuthSidePanel";
+import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -24,9 +25,12 @@ const Login = () => {
         </button>
         <div className="text-center">
           <p className="text-gray-600 mb-2">Don't have an account?</p>
-          <button className="text-blue-600 font-semibold hover:underline">
+          <Link
+            to="/register"
+            className="text-blue-600 font-semibold hover:underline"
+          >
             Register
-          </button>
+          </Link>
         </div>
       </div>
     </div>
