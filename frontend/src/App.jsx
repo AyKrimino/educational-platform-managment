@@ -17,7 +17,6 @@ const App = () => {
           <Route path="/register" element={<Register />} />
 
           {/* Protected routes */}
-          {/* Protected Routes */}
           {protectedRoutes.map(({ path, component: Component }) => (
             <Route
               key={path}
