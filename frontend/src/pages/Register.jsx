@@ -81,7 +81,7 @@ const Register = () => {
           <div className="text-red-600 mb-2 text-justify">
             <ul>
               {errorMessage.split("\n").map((msg, index) => (
-                <li key={index}>{msg}</li>
+                <li key={index}>• {msg}</li>
               ))}
             </ul>
           </div>
