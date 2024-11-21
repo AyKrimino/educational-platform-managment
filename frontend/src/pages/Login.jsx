@@ -22,7 +22,6 @@ const Login = () => {
 
     try {
       await login(credentials);
-      console.log("accepted");
       navigate("/home");
     } catch (error) {
       console.log("Login failed: ", error);

@@ -52,6 +52,7 @@ class RegisterUserSerializer(serializers.ModelSerializer):
 class LoginUserSerializer(serializers.Serializer):
     email = serializers.EmailField(required=True)
     password = serializers.CharField(required=True, write_only=True)
+    is_teacher = serializers.BooleanField(read_only=True)
 
     def create(self, validated_data):
         user = authenticate(**validated_data)
@@ -60,6 +61,11 @@ class LoginUserSerializer(serializers.Serializer):
         if not user.is_active:
             raise serializers.ValidationError(_("Inactive user account."))
         return user
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation['is_teacher'] = instance.is_teacher
+        return representation
 
 
 class ErrorResponseSerializer(serializers.Serializer):
