@@ -18,10 +18,13 @@ const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await axiosInstance.post("/login/", credentials);
-      const { access, refresh } = response.data.tokens;
+      const { tokens, is_teacher } = response.data;
 
-      localStorage.setItem("authTokens", JSON.stringify({ access, refresh }));
-      setAuth({ access, refresh });
+      const role = is_teacher ? "teacher" : "student";
+
+      const authData = { ...tokens, role };
+      localStorage.setItem("authTokens", JSON.stringify(authData));
+      setAuth(authData);
     } catch (error) {
       console.log("Login failed", error);
       throw error;
