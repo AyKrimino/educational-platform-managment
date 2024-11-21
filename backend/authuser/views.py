@@ -132,11 +132,20 @@ class LoginUserView(APIView):
         serializer = LoginUserSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+
         user.last_login = datetime.now(tz=timezone.utc)
         user.save()
+
         token = RefreshToken.for_user(user)
         data = serializer.data
-        data["tokens"] = {"refresh": str(token), "access": str(token.access_token)}
+        data.update({
+            "tokens": {
+                "refresh": str(token),
+                "access": str(token.access_token),
+            },
+            "is_teacher": user.is_teacher
+        })
+
         return Response(data, status=status.HTTP_200_OK)
 
 
