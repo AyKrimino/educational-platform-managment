@@ -4,7 +4,12 @@ import Register from "./pages/Register";
 import Home from "./pages/Home";
 import AuthProvider from "./providers/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
+import PublicRoute from "./components/PublicRoute";
 
+const publicRoutes = [
+  { path: "/", component: Login },
+  { path: "/register", component: Register },
+];
 const protectedRoutes = [{ path: "/home", component: Home }];
 
 const App = () => {
@@ -12,11 +17,20 @@ const App = () => {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Public routes */}
-          <Route path="/" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          {/* Public routes for unauthenticated (anonymous) users only */}
+          {publicRoutes.map(({ path, component: Component }) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <PublicRoute>
+                  <Component />
+                </PublicRoute>
+              }
+            />
+          ))}
 
-          {/* Protected routes */}
+          {/* Protected routes for authenticated users only */}
           {protectedRoutes.map(({ path, component: Component }) => (
             <Route
               key={path}
