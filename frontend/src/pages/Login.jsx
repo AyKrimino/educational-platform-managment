@@ -77,6 +77,7 @@ const Login = () => {
             className="border rounded-lg p-2 w-80 mb-4"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            required
           />
           <input
             type="password"
@@ -84,8 +85,10 @@ const Login = () => {
             className="border rounded-lg p-2 w-80 mb-6"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            required
           />
           <button
+            type="submit"
             className={`${
               isLoading ? "bg-blue-300 cursor-not-allowed" : "bg-blue-600"
             } text-white py-2 px-4 rounded-lg w-80 mb-4 transition-all duration-300 ease-in-out`}
