@@ -34,11 +34,22 @@ const AuthProvider = ({ children }) => {
   /**
    * Logout function.
    */
-  const logout = () => {
-    localStorage.removeItem("authTokens");
-    setAuth(null);
+  const logout = async () => {
+    try {
+      if (auth?.refresh) {
+        await axiosInstance.post(
+          "/logout/",
+          { refresh: auth.refresh },
+          { headers: { Authorization: `Bearer ${auth.access}` } }
+        );
+      }
+    } catch (error) {
+      console.error("Logout failed", error);
+    } finally {
+      localStorage.removeItem("authTokens");
+      setAuth(null);
+    }
   };
-
   /**
    * Refresh the access token.
    */
@@ -52,9 +63,9 @@ const AuthProvider = ({ children }) => {
       const response = await axiosInstance.post("/token/refresh/", {
         refresh: auth.refresh,
       });
-      const { access } = response.data;
+      const { access, refresh: newRefresh } = response.data;
 
-      const updatedTokens = { ...auth, access };
+      const updatedTokens = { ...auth, access, refresh: newRefresh };
       localStorage.setItem("authTokens", JSON.stringify(updatedTokens));
       setAuth(updatedTokens);
     } catch (error) {

@@ -17,6 +17,7 @@ const Home = () => {
       <Header />
       <WelcomeBack />
       <main>
+        <button onClick={handleLogout}>logout</button>
         <h1 className="text-4xl font-bold mb-4">Welcome to the Home page!</h1>
         <p className="text-gray-600 mb-6">
           This is a protected page accessible only to authenticated users.
