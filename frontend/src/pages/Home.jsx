@@ -3,6 +3,7 @@ import AuthContext from "../context/AuthContext";
 import Header from "../components/Header";
 import WelcomeBack from "../components/WelcomBack";
 import ClassroomCard from "../features/classrooms/ClassroomCard";
+import ListClassroomCards from "../features/classrooms/ListClassroomCards";
 
 const Home = () => {
   const { logout, auth } = useContext(AuthContext);
@@ -17,7 +18,7 @@ const Home = () => {
     <div className="h-screen w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
       <Header />
       <WelcomeBack />
-      <ClassroomCard />
+      <ListClassroomCards />
       <main>
         <button onClick={handleLogout}>logout</button>
         <h1 className="text-4xl font-bold mb-4">Welcome to the Home page!</h1>
