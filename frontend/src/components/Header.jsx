@@ -8,7 +8,9 @@ import MenuItem from "@mui/material/MenuItem";
 import IconButton from "@mui/material/IconButton";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import AuthContext from "../context/AuthContext";
+import { Link } from "@mui/material";
 
 const settings = ["Account", "Dashboard", "Logout"];
 
@@ -43,6 +45,21 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const { logout } = useContext(AuthContext);
+
+  const handleAccount = () => {
+    console.log("Account clicked");
+  };
+
+  const handleDashboard = () => {
+    console.log("Dashboard clicked");
+  };
+
+  const settingsHandlers = {
+    Account: handleAccount,
+    Dashboard: handleDashboard,
+    Logout: logout,
+  };
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -55,12 +72,15 @@ const Header = () => {
   return (
     <header className="flex justify-between w-full h-16 bg-blue-600 px-4 sm:px-6 md:px-8 lg:px-12">
       <div className="flex items-center justify-center gap-4 cursor-pointer">
-        <div className="">
+        <Link
+          to="/home"
+          className="flex items-center justify-center gap-4 cursor-pointer"
+        >
           <img src={quizroomLogo} alt="quizroom logo" className="w-10 h-10" />
-        </div>
-        <p className="font-semibold font-mono tracking-wider text-xl text-gray-100">
-          QuizRoom Hub
-        </p>
+          <p className="font-semibold font-mono tracking-wider text-xl text-gray-100">
+            QuizRoom Hub
+          </p>
+        </Link>
       </div>
       <div className="flex items-center justify-center">
         <Box sx={{ flexGrow: 0 }}>
@@ -92,7 +112,13 @@ const Header = () => {
             onClose={handleCloseUserMenu}
           >
             {settings.map((setting) => (
-              <MenuItem key={setting} onClick={handleCloseUserMenu}>
+              <MenuItem
+                key={setting}
+                onClick={() => {
+                  settingsHandlers[setting]();
+                  handleCloseUserMenu();
+                }}
+              >
                 <Typography sx={{ textAlign: "center" }}>{setting}</Typography>
               </MenuItem>
             ))}
