@@ -190,6 +190,39 @@ class TeacherProfileRetrieveUpdateDestroyAPIView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class TeacherProfileByUserAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+    
+    def get_object(self):
+        try:
+            profile = TeacherProfile.objects.get(user_id=self.request.user.id)
+            self.check_object_permissions(self.request, profile)
+            return profile
+        except TeacherProfile.DoesNotExist:
+            return Http404
+        
+    def get(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        serializer = TeacherProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        serializer = TeacherProfileSerializer(profile, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        user = User.objects.get(id=profile.user.id)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class StudentProfileListAPIView(ListAPIView):
     """
     API view to list all StudentProfile instances.
@@ -315,3 +348,37 @@ class StudentProfileRetrieveUpdateDestroyAPIView(APIView):
         user = User.objects.get(id=student_profile.user.id)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StudentProfileByUserAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+    
+    def get_object(self):
+        try:
+            profile = StudentProfile.objects.get(user_id=self.request.user.id)
+            self.check_object_permissions(self.request, profile)
+            return profile
+        except StudentProfile.DoesNotExist:
+            return Http404
+        
+    def get(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        serializer = StudentProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def put(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        serializer = StudentProfileSerializer(profile, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    def delete(self, request, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object()
+        user = User.objects.get(id=profile.user.id)
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    
