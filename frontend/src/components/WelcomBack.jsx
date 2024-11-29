@@ -8,8 +8,13 @@ import {
   Box,
 } from "@mui/material";
 import studentImage from "../assets/images/student.png";
+import teacherImage from "../assets/images/teacher.png";
+import { useContext } from "react";
+import AuthContext from "../context/AuthContext";
 
 const WelcomeBack = () => {
+  const { auth } = useContext(AuthContext);
+
   return (
     <Container>
       <Grid container mt={3} justifyContent="center" spacing={3}>
@@ -48,18 +53,25 @@ const WelcomeBack = () => {
                       color="textSecondary"
                       my={2}
                     >
-                      Get started by joining a new classroom.
+                      Get started by{" "}
+                      {auth.role === "teacher" ? "creating" : "joining"} a new
+                      classroom.
                     </Typography>
                     <Button variant="contained" color="primary">
-                      Join New Classroom
+                      {auth.role === "teacher" ? "Create" : "Join"} New
+                      Classroom
                     </Button>
                   </Box>
                 </Grid>
                 <Grid item sm={5}>
                   <Box mb="-30px">
                     <img
-                      src={studentImage}
-                      alt="Student illustration."
+                      src={
+                        auth.role === "teacher" ? teacherImage : studentImage
+                      }
+                      alt={`${
+                        auth.role === "teacher" ? "Teacher" : "Student"
+                      } illustration.`}
                       width={280}
                       height={200}
                     />
