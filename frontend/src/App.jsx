@@ -5,12 +5,16 @@ import Home from "./pages/Home";
 import AuthProvider from "./providers/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
+import AccountPage from "./pages/AccountPage";
 
 const publicRoutes = [
   { path: "/", component: Login },
   { path: "/register", component: Register },
 ];
-const protectedRoutes = [{ path: "/home", component: Home }];
+const protectedRoutes = [
+  { path: "/home", component: Home },
+  { path: "/account", component: AccountPage },
+];
 
 const App = () => {
   return (
