@@ -15,5 +15,5 @@ urlpatterns = [
     path("profiles/teachers/me/", TeacherProfileByUserAPIView.as_view(), name="teacher-profile-by-user"),
     path("profiles/students/", StudentProfileListAPIView.as_view(), name="students-list"),
     path("profiles/students/<uuid:pk>/", StudentProfileRetrieveUpdateDestroyAPIView.as_view(), name="students-detail"),
-    path("profiles/stduents/me/", StudentProfileByUserAPIView.as_view(), name="student-profile-by-user"),
+    path("profiles/students/me/", StudentProfileByUserAPIView.as_view(), name="student-profile-by-user"),
 ]
