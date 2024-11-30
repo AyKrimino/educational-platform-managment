@@ -8,6 +8,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Skeleton,
   Stack,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -113,7 +114,20 @@ const AccountPage = () => {
     setShowDeleteDialog(false);
   };
 
-  if (!profileData) return <p>Loading...</p>;
+  if (!profileData) {
+    return (
+      <div className="max-w-4xl mx-auto p-8">
+        <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+        <Stack spacing={2}>
+          <Skeleton variant="text" width="40%" height={40} />
+          <Skeleton variant="text" width="60%" height={40} />
+          <Skeleton variant="rectangular" height={56} />
+          <Skeleton variant="text" width="100%" height={40} />
+          <Skeleton variant="rectangular" height={150} />
+        </Stack>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-8">
