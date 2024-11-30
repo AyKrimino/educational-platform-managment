@@ -49,7 +49,7 @@ const AccountPage = () => {
         setFirstName(data.user_first_name);
         setLastName(data.user_last_name);
         setBio(data.bio);
-        setDateOfBirth(data.date_of_birth);
+        setDateOfBirth(dayjs(data.date_of_birth));
         setYearsOfExperience(data.years_of_experience);
       } catch (error) {
         console.error(error.message);
@@ -60,12 +60,15 @@ const AccountPage = () => {
 
   const handleUpdate = async (e) => {
     e.preventDefault();
+    const formattedDateOfBirth = dateOfBirth
+      ? dateOfBirth.format("YYYY-MM-DD")
+      : null;
 
     const userInputs = {
       user_first_name: firstName,
       user_last_name: lastName,
       bio: bio,
-      date_of_birth: dateOfBirth ? dateOfBirth.format("YYYY-MM-DD") : null,
+      date_of_birth: formattedDateOfBirth,
       years_of_experience: yearsOfExperience,
     };
 
@@ -194,7 +197,7 @@ const AccountPage = () => {
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               value={dateOfBirth ? dayjs(dateOfBirth) : null}
-              onChange={(newDate) => setDateOfBirth(newDate)}
+              onChange={(newDate) => setDateOfBirth(dayjs(newDate))}
             />
           </LocalizationProvider>
         </div>
