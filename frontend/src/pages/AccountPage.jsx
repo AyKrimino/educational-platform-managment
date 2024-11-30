@@ -1,6 +1,15 @@
 import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { Button } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Stack,
+} from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -23,6 +32,9 @@ const AccountPage = () => {
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [yearsOfExperience, setYearsOfExperience] = useState(0);
   const [profileData, setProfileData] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState(""); // (success | warning)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -62,21 +74,43 @@ const AccountPage = () => {
           ? await updateTeacherAccount(auth?.access, userInputs)
           : await updateStudentAccount(auth?.access, userInputs);
       setProfileData(data);
+      setAlertMessage("Profile updated successfully!");
+      setAlertSeverity("success");
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 1500);
     } catch (error) {
-      console.error(error);
+      console.error("Error updating the account:", error);
+
+      setAlertMessage("Failed to update profile.");
+      setAlertSeverity("warning");
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 1500);
     }
   };
 
   const handleDelete = async () => {
     try {
+      await logout();
       auth.role === "teacher"
         ? await deleteTeacherAccount(auth?.access)
         : await deleteStudentAccount(auth?.access);
-      logout();
       navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Error deleting the account:", error);
+
+      setAlertMessage("Failed to delete account.");
+      setAlertSeverity("warning");
     }
+  };
+
+  const openDeleteDialog = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false);
   };
 
   if (!profileData) return <p>Loading...</p>;
@@ -84,6 +118,14 @@ const AccountPage = () => {
   return (
     <div className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+
+      {alertMessage && (
+        <Stack sx={{ width: "100%", mb: 4 }} spacing={2}>
+          <Alert variant="outlined" severity={alertSeverity}>
+            {alertMessage}
+          </Alert>
+        </Stack>
+      )}
 
       <form onSubmit={handleUpdate} className="space-y-4">
         <div>
@@ -160,11 +202,33 @@ const AccountPage = () => {
             Update Profile
           </Button>
 
-          <Button onClick={handleDelete} variant="contained" color="warning">
+          <Button onClick={openDeleteDialog} variant="contained" color="error">
             Delete Account
           </Button>
         </div>
       </form>
+
+      <Dialog
+        disableRestoreFocus
+        open={showDeleteDialog}
+        onClose={closeDeleteDialog}
+      >
+        <DialogTitle>{"Confirm Account Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete you account? This action is
+            irreversible.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };
