@@ -4,10 +4,22 @@ import { Button } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { getStudentAccount, getTeacherAccount } from "../services/profilesService";
+import {
+  getStudentAccount,
+  getTeacherAccount,
+  updateStudentAccount,
+  updateTeacherAccount,
+} from "../services/profilesService";
+import dayjs from "dayjs";
 
 const AccountPage = () => {
   const { auth } = useContext(AuthContext);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [bio, setBio] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [yearsOfExperience, setYearsOfExperience] = useState(0);
+
   const [profileData, setProfileData] = useState(null);
 
   useEffect(() => {
@@ -18,6 +30,11 @@ const AccountPage = () => {
             ? await getTeacherAccount(auth?.access)
             : await getStudentAccount(auth?.access);
         setProfileData(data);
+        setFirstName(data.user_first_name);
+        setLastName(data.user_last_name);
+        setBio(data.bio);
+        setDateOfBirth(data.date_of_birth);
+        setYearsOfExperience(data.years_of_experience);
       } catch (error) {
         console.error(error.message);
       }
@@ -25,8 +42,26 @@ const AccountPage = () => {
     fetchProfile();
   }, [auth]);
 
-  const handleUpdate = (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
+
+    const userInputs = {
+      user_first_name: firstName,
+      user_last_name: lastName,
+      bio: bio,
+      date_of_birth: dateOfBirth ? dateOfBirth.format("YYYY-MM-DD") : null,
+      years_of_experience: yearsOfExperience,
+    };
+
+    try {
+      const data =
+        auth.role === "teacher"
+          ? await updateTeacherAccount(auth?.access, userInputs)
+          : await updateStudentAccount(auth?.access, userInputs);
+      setProfileData(data);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const handleDelete = () => {};
@@ -59,7 +94,8 @@ const AccountPage = () => {
           <label className="block text-gray-700">First Name:</label>
           <input
             type="text"
-            defaultValue={profileData.user_first_name}
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -68,7 +104,8 @@ const AccountPage = () => {
           <label className="block text-gray-700">Last Name:</label>
           <input
             type="text"
-            defaultValue={profileData.user_last_name}
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -76,7 +113,8 @@ const AccountPage = () => {
         <div>
           <label className="block text-gray-700">Bio:</label>
           <textarea
-            defaultValue={profileData.bio}
+            value={bio || ""}
+            onChange={(e) => setBio(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
             rows="3"
           />
@@ -85,7 +123,10 @@ const AccountPage = () => {
         <div>
           <label className="block text-gray-700">Date of Birth:</label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker defaultValue={profileData.date_of_birth} />
+            <DatePicker
+              value={dateOfBirth ? dayjs(dateOfBirth) : null}
+              onChange={(newDate) => setDateOfBirth(newDate)}
+            />
           </LocalizationProvider>
         </div>
 
@@ -94,14 +135,15 @@ const AccountPage = () => {
             <label className="block text-gray-700">Years of Experience:</label>
             <input
               type="number"
-              defaultValue={profileData.years_of_experience}
+              value={yearsOfExperience || ""}
+              onChange={(e) => setYearsOfExperience(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
             />
           </div>
         )}
 
         <div className="flex justify-between">
-          <Button variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary">
             Update Profile
           </Button>
 

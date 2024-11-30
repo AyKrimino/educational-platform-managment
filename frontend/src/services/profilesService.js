@@ -18,6 +18,28 @@ export const getTeacherAccount = async (accessToken) => {
 };
 
 /**
+ * Update Teacher account by user id.
+ * @param {String} accessToken - The user access token to pass it to headers.
+ * @param {Object} requestBody - The request body to be changed
+ * @returns {Promise<Object>} - The server response.
+ */
+export const updateTeacherAccount = async (accessToken, requestBody) => {
+  try {
+    const response = await axiosInstance.put(
+      "/profiles/teachers/me/",
+      requestBody,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating teacher account:", error);
+    throw new Error("Unable to update teacher account.");
+  }
+};
+
+/**
  * Get Student account by user id.
  * @param {String} accessToken - The user access token to pass it to headers.
  * @returns {Promise<Object>} - The server response.
@@ -31,5 +53,27 @@ export const getStudentAccount = async (accessToken) => {
   } catch (error) {
     console.error("Error fetching student account:", error);
     throw new Error("Unable to fetch student account.");
+  }
+};
+
+/**
+ * Update Student account by user id.
+ * @param {String} accessToken - The user access token to pass it to headers.
+ * @param {Object} requestBody - The request body to be changed
+ * @returns {Promise<Object>} - The server response.
+ */
+export const updateStudentAccount = async (accessToken, requestBody) => {
+  try {
+    const response = await axiosInstance.put(
+      "/profiles/students/me/",
+      requestBody,
+      {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error updating student account:", error);
+    throw new Error("Unable to update student account.");
   }
 };
