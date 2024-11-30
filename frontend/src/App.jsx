@@ -6,6 +6,7 @@ import AuthProvider from "./providers/AuthProvider";
 import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import AccountPage from "./pages/AccountPage";
+import PrivateLayout from "./layouts/PrivateLayout";
 
 const publicRoutes = [
   { path: "/", component: Login },
@@ -41,10 +42,12 @@ const App = () => {
               path={path}
               element={
                 <PrivateRoute>
-                  <Component />
+                  <PrivateLayout />
                 </PrivateRoute>
               }
-            />
+            >
+              <Route path={path} element={<Component />} />
+            </Route>
           ))}
         </Routes>
       </Router>

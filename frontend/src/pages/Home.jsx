@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
-import Header from "../components/Header";
 import WelcomeBack from "../components/WelcomBack";
 import ListClassroomCards from "../features/classrooms/ListClassroomCards";
 
@@ -11,7 +10,6 @@ const Home = () => {
 
   return (
     <div className="h-screen w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
-      <Header />
       <WelcomeBack />
       <ListClassroomCards />
     </div>
