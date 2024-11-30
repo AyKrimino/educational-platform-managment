@@ -5,22 +5,25 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import {
+  deleteStudentAccount,
+  deleteTeacherAccount,
   getStudentAccount,
   getTeacherAccount,
   updateStudentAccount,
   updateTeacherAccount,
 } from "../services/profilesService";
 import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 const AccountPage = () => {
-  const { auth } = useContext(AuthContext);
+  const { auth, logout } = useContext(AuthContext);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [bio, setBio] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState(null);
   const [yearsOfExperience, setYearsOfExperience] = useState(0);
-
   const [profileData, setProfileData] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -64,7 +67,17 @@ const AccountPage = () => {
     }
   };
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    try {
+      auth.role === "teacher"
+        ? await deleteTeacherAccount(auth?.access)
+        : await deleteStudentAccount(auth?.access);
+      logout();
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (!profileData) return <p>Loading...</p>;
 
