@@ -1,38 +1,161 @@
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { Button } from "@mui/material";
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Skeleton,
+  Stack,
+} from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import {
+  deleteStudentAccount,
+  deleteTeacherAccount,
+  getStudentAccount,
+  getTeacherAccount,
+  updateStudentAccount,
+  updateTeacherAccount,
+} from "../services/profilesService";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
 
 const AccountPage = () => {
-  const { auth } = useContext(AuthContext);
+  const { auth, logout } = useContext(AuthContext);
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [bio, setBio] = useState("");
+  const [dateOfBirth, setDateOfBirth] = useState(null);
+  const [yearsOfExperience, setYearsOfExperience] = useState(0);
+  const [profileData, setProfileData] = useState(null);
+  const [alertMessage, setAlertMessage] = useState("");
+  const [alertSeverity, setAlertSeverity] = useState(""); // (success | warning)
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const navigate = useNavigate();
 
-  const handleUpdate = (e) => {
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const data =
+          auth.role === "teacher"
+            ? await getTeacherAccount(auth?.access)
+            : await getStudentAccount(auth?.access);
+        setProfileData(data);
+        setFirstName(data.user_first_name);
+        setLastName(data.user_last_name);
+        setBio(data.bio);
+        setDateOfBirth(data.date_of_birth);
+        setYearsOfExperience(data.years_of_experience);
+      } catch (error) {
+        console.error(error.message);
+      }
+    };
+    fetchProfile();
+  }, [auth]);
+
+  const handleUpdate = async (e) => {
     e.preventDefault();
+
+    const userInputs = {
+      user_first_name: firstName,
+      user_last_name: lastName,
+      bio: bio,
+      date_of_birth: dateOfBirth ? dateOfBirth.format("YYYY-MM-DD") : null,
+      years_of_experience: yearsOfExperience,
+    };
+
+    try {
+      const data =
+        auth.role === "teacher"
+          ? await updateTeacherAccount(auth?.access, userInputs)
+          : await updateStudentAccount(auth?.access, userInputs);
+      setProfileData(data);
+      setAlertMessage("Profile updated successfully!");
+      setAlertSeverity("success");
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 1500);
+    } catch (error) {
+      console.error("Error updating the account:", error);
+
+      setAlertMessage("Failed to update profile.");
+      setAlertSeverity("warning");
+      setTimeout(() => {
+        setAlertMessage("");
+      }, 1500);
+    }
   };
 
-  const handleDelete = () => {};
+  const handleDelete = async () => {
+    try {
+      await logout();
+      auth.role === "teacher"
+        ? await deleteTeacherAccount(auth?.access)
+        : await deleteStudentAccount(auth?.access);
+      navigate("/");
+    } catch (error) {
+      console.error("Error deleting the account:", error);
+
+      setAlertMessage("Failed to delete account.");
+      setAlertSeverity("warning");
+    }
+  };
+
+  const openDeleteDialog = () => {
+    setShowDeleteDialog(true);
+  };
+
+  const closeDeleteDialog = () => {
+    setShowDeleteDialog(false);
+  };
+
+  if (!profileData) {
+    return (
+      <div className="max-w-4xl mx-auto p-8">
+        <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+        <Stack spacing={2}>
+          <Skeleton variant="text" width="40%" height={40} />
+          <Skeleton variant="text" width="60%" height={40} />
+          <Skeleton variant="rectangular" height={56} />
+          <Skeleton variant="text" width="100%" height={40} />
+          <Skeleton variant="rectangular" height={150} />
+        </Stack>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-8">
       <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
 
+      {alertMessage && (
+        <Stack sx={{ width: "100%", mb: 4 }} spacing={2}>
+          <Alert variant="outlined" severity={alertSeverity}>
+            {alertMessage}
+          </Alert>
+        </Stack>
+      )}
+
       <form onSubmit={handleUpdate} className="space-y-4">
         <div>
           <label className="block text-gray-700">User ID:</label>
-          <p className="bg-gray-100 p-2 rounded">241</p>
+          <p className="bg-gray-100 p-2 rounded">{profileData.user_id}</p>
         </div>
 
         <div>
           <label className="block text-gray-700">Email:</label>
-          <p className="bg-gray-100 p-2 rounded">example@example.com</p>
+          <p className="bg-gray-100 p-2 rounded">{profileData.user_email}</p>
         </div>
 
         <div>
           <label className="block text-gray-700">Joined Date:</label>
           <p className="bg-gray-100 p-2 rounded">
-            {new Date().toLocaleDateString()}
+            {new Date(profileData.user_date_joined).toLocaleDateString()}
           </p>
         </div>
 
@@ -40,7 +163,8 @@ const AccountPage = () => {
           <label className="block text-gray-700">First Name:</label>
           <input
             type="text"
-            defaultValue="first_name"
+            value={firstName}
+            onChange={(e) => setFirstName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -49,7 +173,8 @@ const AccountPage = () => {
           <label className="block text-gray-700">Last Name:</label>
           <input
             type="text"
-            defaultValue="last_name"
+            value={lastName}
+            onChange={(e) => setLastName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
@@ -57,7 +182,8 @@ const AccountPage = () => {
         <div>
           <label className="block text-gray-700">Bio:</label>
           <textarea
-            defaultValue="Lorem ipsum dolor sit amet consectetur adipisicing elit. Quia magni quam saepe, nulla distinctio voluptatem? Quo adipisci expedita maxime nam beatae, voluptatem, magni ullam architecto molestias perferendis repellat quam libero."
+            value={bio || ""}
+            onChange={(e) => setBio(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded"
             rows="3"
           />
@@ -66,7 +192,10 @@ const AccountPage = () => {
         <div>
           <label className="block text-gray-700">Date of Birth:</label>
           <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker />
+            <DatePicker
+              value={dateOfBirth ? dayjs(dateOfBirth) : null}
+              onChange={(newDate) => setDateOfBirth(newDate)}
+            />
           </LocalizationProvider>
         </div>
 
@@ -75,22 +204,45 @@ const AccountPage = () => {
             <label className="block text-gray-700">Years of Experience:</label>
             <input
               type="number"
-              defaultValue="15"
+              value={yearsOfExperience || ""}
+              onChange={(e) => setYearsOfExperience(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded"
             />
           </div>
         )}
 
         <div className="flex justify-between">
-          <Button variant="contained" color="primary">
+          <Button type="submit" variant="contained" color="primary">
             Update Profile
           </Button>
 
-          <Button onClick={handleDelete} variant="contained" color="warning">
+          <Button onClick={openDeleteDialog} variant="contained" color="error">
             Delete Account
           </Button>
         </div>
       </form>
+
+      <Dialog
+        disableRestoreFocus
+        open={showDeleteDialog}
+        onClose={closeDeleteDialog}
+      >
+        <DialogTitle>{"Confirm Account Deletion"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to delete you account? This action is
+            irreversible.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDeleteDialog} color="primary">
+            Cancel
+          </Button>
+          <Button onClick={handleDelete} color="error">
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 };

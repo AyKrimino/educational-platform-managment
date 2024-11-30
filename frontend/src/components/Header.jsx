@@ -10,7 +10,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
-import { Link } from "@mui/material";
+import { Link, useNavigate } from "react-router-dom";
 
 const settings = ["Account", "Dashboard", "Logout"];
 
@@ -46,19 +46,25 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleAccount = () => {
-    console.log("Account clicked");
+    navigate("/account");
   };
 
   const handleDashboard = () => {
-    console.log("Dashboard clicked");
+    navigate("/dashboard");
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   const settingsHandlers = {
     Account: handleAccount,
     Dashboard: handleDashboard,
-    Logout: logout,
+    Logout: handleLogout,
   };
 
   const handleOpenUserMenu = (event) => {
