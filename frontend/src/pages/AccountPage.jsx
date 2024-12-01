@@ -88,7 +88,6 @@ const AccountPage = () => {
       formData.append(key, userInputs[key]);
     });
     if (file) formData.append("profile_picture", file, file.name);
-    
 
     try {
       const data =
@@ -196,17 +195,17 @@ const AccountPage = () => {
 
           <div>
             <label className="block text-gray-700">User ID:</label>
-            <p className="bg-gray-100 p-2 rounded">{profileData.user_id}</p>
+            <p className="bg-gray-200 p-2 rounded">{profileData.user_id}</p>
           </div>
 
           <div>
             <label className="block text-gray-700">Email:</label>
-            <p className="bg-gray-100 p-2 rounded">{profileData.user_email}</p>
+            <p className="bg-gray-200 p-2 rounded">{profileData.user_email}</p>
           </div>
 
           <div>
             <label className="block text-gray-700">Joined Date:</label>
-            <p className="bg-gray-100 p-2 rounded">
+            <p className="bg-gray-200 p-2 rounded">
               {new Date(profileData.user_date_joined).toLocaleDateString()}
             </p>
           </div>
