@@ -25,6 +25,8 @@ import {
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 
+const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL;
+
 const AccountPage = () => {
   const { auth, logout } = useContext(AuthContext);
   const [firstName, setFirstName] = useState("");
@@ -36,6 +38,10 @@ const AccountPage = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState(""); // (success | warning)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [profilePicture, setProfilePicture] = useState(
+    "/images/default_profile_picture.png"
+  );
+  const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,6 +57,11 @@ const AccountPage = () => {
         setBio(data.bio);
         setDateOfBirth(dayjs(data.date_of_birth));
         setYearsOfExperience(data.years_of_experience);
+        setProfilePicture(
+          data.profile_picture
+            ? BASE_URL + data.profile_picture
+            : "/images/default_profile_picture.png"
+        );
       } catch (error) {
         console.error(error.message);
       }
@@ -72,11 +83,18 @@ const AccountPage = () => {
       years_of_experience: yearsOfExperience,
     };
 
+    const formData = new FormData();
+    Object.keys(userInputs).forEach((key) => {
+      formData.append(key, userInputs[key]);
+    });
+    if (file) formData.append("profile_picture", file, file.name);
+    
+
     try {
       const data =
         auth.role === "teacher"
-          ? await updateTeacherAccount(auth?.access, userInputs)
-          : await updateStudentAccount(auth?.access, userInputs);
+          ? await updateTeacherAccount(auth?.access, formData)
+          : await updateStudentAccount(auth?.access, formData);
       setProfileData(data);
       setAlertMessage("Profile updated successfully!");
       setAlertSeverity("success");
@@ -117,6 +135,14 @@ const AccountPage = () => {
     setShowDeleteDialog(false);
   };
 
+  const handleFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    if (selectedFile) {
+      setFile(selectedFile);
+      setProfilePicture(URL.createObjectURL(selectedFile));
+    }
+  };
+
   if (!profileData) {
     return (
       <div className="max-w-4xl mx-auto p-8">
@@ -133,119 +159,149 @@ const AccountPage = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto p-8">
-      <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
+    <div className="h-[100%] w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
+      <div className="max-w-4xl mx-auto p-8">
+        <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
 
-      {alertMessage && (
-        <Stack sx={{ width: "100%", mb: 4 }} spacing={2}>
-          <Alert variant="outlined" severity={alertSeverity}>
-            {alertMessage}
-          </Alert>
-        </Stack>
-      )}
+        {alertMessage && (
+          <Stack sx={{ width: "100%", mb: 4 }} spacing={2}>
+            <Alert variant="outlined" severity={alertSeverity}>
+              {alertMessage}
+            </Alert>
+          </Stack>
+        )}
 
-      <form onSubmit={handleUpdate} className="space-y-4">
-        <div>
-          <label className="block text-gray-700">User ID:</label>
-          <p className="bg-gray-100 p-2 rounded">{profileData.user_id}</p>
-        </div>
-
-        <div>
-          <label className="block text-gray-700">Email:</label>
-          <p className="bg-gray-100 p-2 rounded">{profileData.user_email}</p>
-        </div>
-
-        <div>
-          <label className="block text-gray-700">Joined Date:</label>
-          <p className="bg-gray-100 p-2 rounded">
-            {new Date(profileData.user_date_joined).toLocaleDateString()}
-          </p>
-        </div>
-
-        <div>
-          <label className="block text-gray-700">First Name:</label>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700">Last Name:</label>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700">Bio:</label>
-          <textarea
-            value={bio || ""}
-            onChange={(e) => setBio(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded"
-            rows="3"
-          />
-        </div>
-
-        <div>
-          <label className="block text-gray-700">Date of Birth:</label>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <DatePicker
-              value={dateOfBirth ? dayjs(dateOfBirth) : null}
-              onChange={(newDate) => setDateOfBirth(dayjs(newDate))}
+        <form
+          onSubmit={handleUpdate}
+          className="space-y-4"
+          encType="multipart/form-data"
+        >
+          <div className="flex justify-center mb-6">
+            <img
+              src={profilePicture}
+              alt="Profile"
+              className="w-32 h-32 rounded-full border-2 border-gray-300 object-cover"
             />
-          </LocalizationProvider>
-        </div>
-
-        {auth.role === "teacher" && (
+          </div>
           <div>
-            <label className="block text-gray-700">Years of Experience:</label>
+            <label className="block text-gray-700">
+              Change Profile Picture:
+            </label>
             <input
-              type="number"
-              value={yearsOfExperience || ""}
-              onChange={(e) => setYearsOfExperience(e.target.value)}
+              type="file"
+              onChange={handleFileChange}
               className="w-full p-2 border border-gray-300 rounded"
             />
           </div>
-        )}
 
-        <div className="flex justify-between">
-          <Button type="submit" variant="contained" color="primary">
-            Update Profile
-          </Button>
+          <div>
+            <label className="block text-gray-700">User ID:</label>
+            <p className="bg-gray-100 p-2 rounded">{profileData.user_id}</p>
+          </div>
 
-          <Button onClick={openDeleteDialog} variant="contained" color="error">
-            Delete Account
-          </Button>
-        </div>
-      </form>
+          <div>
+            <label className="block text-gray-700">Email:</label>
+            <p className="bg-gray-100 p-2 rounded">{profileData.user_email}</p>
+          </div>
 
-      <Dialog
-        disableRestoreFocus
-        open={showDeleteDialog}
-        onClose={closeDeleteDialog}
-      >
-        <DialogTitle>{"Confirm Account Deletion"}</DialogTitle>
-        <DialogContent>
-          <DialogContentText>
-            Are you sure you want to delete you account? This action is
-            irreversible.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={closeDeleteDialog} color="primary">
-            Cancel
-          </Button>
-          <Button onClick={handleDelete} color="error">
-            Delete
-          </Button>
-        </DialogActions>
-      </Dialog>
+          <div>
+            <label className="block text-gray-700">Joined Date:</label>
+            <p className="bg-gray-100 p-2 rounded">
+              {new Date(profileData.user_date_joined).toLocaleDateString()}
+            </p>
+          </div>
+
+          <div>
+            <label className="block text-gray-700">First Name:</label>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(e) => setFirstName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700">Last Name:</label>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(e) => setLastName(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700">Bio:</label>
+            <textarea
+              value={bio || ""}
+              onChange={(e) => setBio(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded"
+              rows="3"
+            />
+          </div>
+
+          <div>
+            <label className="block text-gray-700">Date of Birth:</label>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                value={dateOfBirth ? dayjs(dateOfBirth) : null}
+                onChange={(newDate) => setDateOfBirth(dayjs(newDate))}
+              />
+            </LocalizationProvider>
+          </div>
+
+          {auth.role === "teacher" && (
+            <div>
+              <label className="block text-gray-700">
+                Years of Experience:
+              </label>
+              <input
+                type="number"
+                value={yearsOfExperience || ""}
+                onChange={(e) => setYearsOfExperience(e.target.value)}
+                className="w-full p-2 border border-gray-300 rounded"
+              />
+            </div>
+          )}
+
+          <div className="flex justify-between">
+            <Button type="submit" variant="contained" color="primary">
+              Update Profile
+            </Button>
+
+            <Button
+              onClick={openDeleteDialog}
+              variant="contained"
+              color="error"
+            >
+              Delete Account
+            </Button>
+          </div>
+        </form>
+
+        <Dialog
+          disableRestoreFocus
+          open={showDeleteDialog}
+          onClose={closeDeleteDialog}
+        >
+          <DialogTitle>{"Confirm Account Deletion"}</DialogTitle>
+          <DialogContent>
+            <DialogContentText>
+              Are you sure you want to delete you account? This action is
+              irreversible.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={closeDeleteDialog} color="primary">
+              Cancel
+            </Button>
+            <Button onClick={handleDelete} color="error">
+              Delete
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </div>
     </div>
   );
 };

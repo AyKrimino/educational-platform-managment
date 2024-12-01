@@ -29,7 +29,10 @@ export const updateTeacherAccount = async (accessToken, requestBody) => {
       "/profiles/teachers/me/",
       requestBody,
       {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
     return response.data;
@@ -84,7 +87,10 @@ export const updateStudentAccount = async (accessToken, requestBody) => {
       "/profiles/students/me/",
       requestBody,
       {
-        headers: { Authorization: `Bearer ${accessToken}` },
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "multipart/form-data",
+        },
       }
     );
     return response.data;

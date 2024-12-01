@@ -9,7 +9,7 @@ const Home = () => {
   if (!auth) return <p>Loading...</p>;
 
   return (
-    <div className="h-screen w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
+    <div className="h-[100%] w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
       <WelcomeBack />
       <ListClassroomCards />
     </div>

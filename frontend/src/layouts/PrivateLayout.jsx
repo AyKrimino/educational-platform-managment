@@ -3,9 +3,9 @@ import Header from "../components/Header";
 
 const PrivateLayout = () => {
   return (
-    <div className="h-screen overflow-hidden">
+    <div className="h-full overflow-hidden">
       <Header />
-      <main className="h-full overflow-auto">
+      <main className="h-[92%] overflow-auto">
         <Outlet />
       </main>
     </div>

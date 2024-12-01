@@ -76,7 +76,7 @@ const Header = () => {
   };
 
   return (
-    <header className="flex justify-between w-full h-16 bg-blue-600 px-4 sm:px-6 md:px-8 lg:px-12">
+    <header className="flex justify-between w-full h-[8%] bg-blue-600 px-4 sm:px-6 md:px-8 lg:px-12">
       <div className="flex items-center justify-center gap-4 cursor-pointer">
         <Link
           to="/home"
@@ -97,7 +97,11 @@ const Header = () => {
                 anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
                 variant="dot"
               >
-                <Avatar className="cursor-pointer" alt="" src="" />
+                <Avatar
+                  className="cursor-pointer"
+                  alt="user profile picture"
+                  src="/images/default_profile_picture.png"
+                />
               </StyledBadge>
             </IconButton>
           </Tooltip>
