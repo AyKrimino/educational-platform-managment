@@ -80,8 +80,11 @@ const AccountPage = () => {
       user_last_name: lastName,
       bio: bio,
       date_of_birth: formattedDateOfBirth,
-      years_of_experience: yearsOfExperience,
     };
+
+    if (auth.role === "teacher") {
+      userInputs.years_of_experience = yearsOfExperience;
+    }
 
     const formData = new FormData();
     Object.keys(userInputs).forEach((key) => {
