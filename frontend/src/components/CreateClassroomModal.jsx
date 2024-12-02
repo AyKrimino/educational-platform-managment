@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
 import { createClassroom } from '../services/Classrooms';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const CreateClassroomModal = ({ open, handleClose }) => {
     const [classroomName, setClassroomName] = useState('');
@@ -10,9 +12,11 @@ const CreateClassroomModal = ({ open, handleClose }) => {
             console.log("Creating classroom with name: ", classroomName);
             const response = await createClassroom(classroomName);
             if (response.status === 201) {
+                toast.success('Classroom created successfully!');
                 handleClose();
             }
         } catch (error) {
+            toast.error('Failed to create classroom. Please try again.');
             console.error(error);
         }
     };
