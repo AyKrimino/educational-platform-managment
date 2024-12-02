@@ -1,3 +1,4 @@
+import React, { useState, useContext } from "react";
 import {
   Container,
   Grid,
@@ -9,11 +10,20 @@ import {
 } from "@mui/material";
 import studentImage from "../assets/images/student.png";
 import teacherImage from "../assets/images/teacher.png";
-import { useContext } from "react";
 import AuthContext from "../context/AuthContext";
+import CreateClassroomModal from "./createClassroomModal";
+import JoinClassroomModal from "./JoinClassroomModal";
 
 const WelcomeBack = () => {
   const { auth } = useContext(AuthContext);
+  const [createModalOpen, setCreateModalOpen] = useState(false);
+  const [joinModalOpen, setJoinModalOpen] = useState(false);
+
+  const handleCreateModalOpen = () => setCreateModalOpen(true);
+  const handleCreateModalClose = () => setCreateModalOpen(false);
+
+  const handleJoinModalOpen = () => setJoinModalOpen(true);
+  const handleJoinModalClose = () => setJoinModalOpen(false);
 
   return (
     <Container>
@@ -57,7 +67,7 @@ const WelcomeBack = () => {
                       {auth.role === "teacher" ? "creating" : "joining"} a new
                       classroom.
                     </Typography>
-                    <Button variant="contained" color="primary">
+                    <Button variant="contained" color="primary" onClick={auth.role === "teacher" ? handleCreateModalOpen : handleJoinModalOpen}>
                       {auth.role === "teacher" ? "Create" : "Join"} New
                       Classroom
                     </Button>
@@ -82,6 +92,8 @@ const WelcomeBack = () => {
           </Card>
         </Grid>
       </Grid>
+      <CreateClassroomModal open={createModalOpen} handleClose={handleCreateModalClose} />
+      <JoinClassroomModal open={joinModalOpen} handleClose={handleJoinModalClose} />
     </Container>
   );
 };
