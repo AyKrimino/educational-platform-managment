@@ -11,7 +11,7 @@ import {
 import studentImage from "../assets/images/student.png";
 import teacherImage from "../assets/images/teacher.png";
 import AuthContext from "../context/AuthContext";
-import CreateClassroomModal from "./createClassroomModal";
+import CreateClassroomModal from "./CreateClassroomModal";
 import JoinClassroomModal from "./JoinClassroomModal";
 
 const WelcomeBack = () => {
@@ -67,7 +67,15 @@ const WelcomeBack = () => {
                       {auth.role === "teacher" ? "creating" : "joining"} a new
                       classroom.
                     </Typography>
-                    <Button variant="contained" color="primary" onClick={auth.role === "teacher" ? handleCreateModalOpen : handleJoinModalOpen}>
+                    <Button
+                      variant="contained"
+                      color="primary"
+                      onClick={
+                        auth.role === "teacher"
+                          ? handleCreateModalOpen
+                          : handleJoinModalOpen
+                      }
+                    >
                       {auth.role === "teacher" ? "Create" : "Join"} New
                       Classroom
                     </Button>
@@ -92,8 +100,14 @@ const WelcomeBack = () => {
           </Card>
         </Grid>
       </Grid>
-      <CreateClassroomModal open={createModalOpen} handleClose={handleCreateModalClose} />
-      <JoinClassroomModal open={joinModalOpen} handleClose={handleJoinModalClose} />
+      <CreateClassroomModal
+        open={createModalOpen}
+        handleClose={handleCreateModalClose}
+      />
+      <JoinClassroomModal
+        open={joinModalOpen}
+        handleClose={handleJoinModalClose}
+      />
     </Container>
   );
 };
