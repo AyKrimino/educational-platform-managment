@@ -1,33 +1,21 @@
 import React, { useState } from 'react';
 import { Modal, Box, Typography, TextField, Button } from '@mui/material';
-import { getClassroomById, joinClassroom } from '../services/Classrooms';
+import { joinClassroom } from '../services/Classrooms';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const JoinClassroomModal = ({ open, handleClose }) => {
     const [classroomId, setClassroomId] = useState('');
-    const [classroomName, setClassroomName] = useState('');
-    const [step, setStep] = useState(1);
-
-    const handleGetClassroom = async () => {
-        try {
-            const response = await getClassroomById(classroomId);
-            if (response.status === 200) {
-                console.log("success", response.data);
-                setClassroomName(response.data.name);
-                setStep(2);
-            }
-        } catch (error) {
-            console.error(error);
-        }
-    };
 
     const handleJoinClassroom = async () => {
         try {
             const response = await joinClassroom(classroomId);
             if (response.status === 201) {
-                console.log("success joined", response.data);
+                toast.success('Successfully joined the classroom!');
                 handleClose();
             }
         } catch (error) {
+            toast.error('UUID not found. Please try again.');
             console.error(error);
         }
     };
@@ -35,28 +23,16 @@ const JoinClassroomModal = ({ open, handleClose }) => {
     return (
         <Modal open={open} onClose={handleClose}>
             <Box sx={{ ...modalStyle }}>
-                {step === 1 ? (
-                    <>
-                        <Typography variant="h6" mb={2}>Join Classroom</Typography>
-                        <TextField
-                            label="Classroom UUID"
-                            fullWidth
-                            value={classroomId}
-                            onChange={(e) => setClassroomId(e.target.value)}
-                        />
-                        <Button variant="contained" color="primary" onClick={handleGetClassroom} sx={{ mt: 2 }}>
-                            Get Classroom
-                        </Button>
-                    </>
-                ) : (
-                    <>
-                        <Typography variant="h6" mb={2}>Join Classroom</Typography>
-                        <Typography variant="subtitle1" mb={2}>You are about to join classroom: {classroomName}</Typography>
-                        <Button variant="contained" color="primary" onClick={handleJoinClassroom} sx={{ mt: 2 }}>
-                            Join
-                        </Button>
-                    </>
-                )}
+                <Typography variant="h6" mb={2}>Join Classroom</Typography>
+                <TextField
+                    label="Classroom UUID"
+                    fullWidth
+                    value={classroomId}
+                    onChange={(e) => setClassroomId(e.target.value)}
+                />
+                <Button variant="contained" color="primary" onClick={handleJoinClassroom} sx={{ mt: 2 }}>
+                    Join Classroom
+                </Button>
             </Box>
         </Modal>
     );

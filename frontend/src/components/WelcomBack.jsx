@@ -13,6 +13,8 @@ import teacherImage from "../assets/images/teacher.png";
 import AuthContext from "../context/AuthContext";
 import CreateClassroomModal from "./createClassroomModal";
 import JoinClassroomModal from "./JoinClassroomModal";
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const WelcomeBack = () => {
   const { auth } = useContext(AuthContext);
@@ -94,6 +96,7 @@ const WelcomeBack = () => {
       </Grid>
       <CreateClassroomModal open={createModalOpen} handleClose={handleCreateModalClose} />
       <JoinClassroomModal open={joinModalOpen} handleClose={handleJoinModalClose} />
+      <ToastContainer />
     </Container>
   );
 };
