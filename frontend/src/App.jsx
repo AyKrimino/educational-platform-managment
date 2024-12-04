@@ -7,6 +7,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import PublicRoute from "./components/PublicRoute";
 import AccountPage from "./pages/AccountPage";
 import PrivateLayout from "./layouts/PrivateLayout";
+import ProfilePictureProvider from "./providers/ProfilePictureProvider";
 
 const publicRoutes = [
   { path: "/", component: Login },
@@ -42,7 +43,9 @@ const App = () => {
               path={path}
               element={
                 <PrivateRoute>
-                  <PrivateLayout />
+                  <ProfilePictureProvider>
+                    <PrivateLayout />
+                  </ProfilePictureProvider>
                 </PrivateRoute>
               }
             >

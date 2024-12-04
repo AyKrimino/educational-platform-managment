@@ -11,6 +11,7 @@ import Typography from "@mui/material/Typography";
 import { useContext, useState } from "react";
 import AuthContext from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
+import ProfilePictureContext from "../context/ProfilePictureContext";
 
 const settings = ["Account", "Dashboard", "Logout"];
 
@@ -46,6 +47,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 const Header = () => {
   const [anchorElUser, setAnchorElUser] = useState(null);
   const { logout } = useContext(AuthContext);
+  const { profilePicture } = useContext(ProfilePictureContext);
   const navigate = useNavigate();
 
   const handleAccount = () => {
@@ -100,7 +102,7 @@ const Header = () => {
                 <Avatar
                   className="cursor-pointer"
                   alt="user profile picture"
-                  src="/images/default_profile_picture.png"
+                  src={profilePicture}
                 />
               </StyledBadge>
             </IconButton>

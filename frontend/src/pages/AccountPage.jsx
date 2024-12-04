@@ -24,11 +24,13 @@ import {
 } from "../services/profilesService";
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
+import ProfilePictureContext from "../context/ProfilePictureContext";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL;
 
 const AccountPage = () => {
   const { auth, logout } = useContext(AuthContext);
+  const {profilePicture, setProfilePicture} = useContext(ProfilePictureContext);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [bio, setBio] = useState("");
@@ -38,9 +40,6 @@ const AccountPage = () => {
   const [alertMessage, setAlertMessage] = useState("");
   const [alertSeverity, setAlertSeverity] = useState(""); // (success | warning)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [profilePicture, setProfilePicture] = useState(
-    "/images/default_profile_picture.png"
-  );
   const [file, setFile] = useState(null);
   const navigate = useNavigate();
 
