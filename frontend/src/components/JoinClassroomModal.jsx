@@ -1,16 +1,17 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Modal, Box, Typography, TextField, Button } from "@mui/material";
 import { joinClassroom } from "../services/Classrooms";
+import ClassroomContext from "../context/ClassroomContext";
 
-const JoinClassroomModal = ({ open, handleClose }) => {
+const JoinClassroomModal = () => {
   const [classroomId, setClassroomId] = useState("");
+  const { joinModalOpen, handleJoinModalClose } = useContext(ClassroomContext);
 
   const handleJoinClassroom = async () => {
     try {
       const response = await joinClassroom(classroomId);
       if (response.status === 201) {
-        console.log("success joined", response.data);
-        handleClose();
+        handleJoinModalClose();
       }
     } catch (error) {
       console.error(error);
@@ -18,7 +19,7 @@ const JoinClassroomModal = ({ open, handleClose }) => {
   };
 
   return (
-    <Modal open={open} onClose={handleClose}>
+    <Modal open={joinModalOpen} onClose={handleJoinModalClose}>
       <Box sx={{ ...modalStyle }}>
         <>
           <Typography variant="h6" mb={2}>

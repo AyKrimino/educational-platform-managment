@@ -3,21 +3,37 @@ import ClassroomCard from "./ClassroomCard";
 import { Typography } from "@mui/material";
 import { getClassroomList } from "../../services/Classrooms";
 import ClassroomContext from "../../context/ClassroomContext";
+import { getStudentsClassroomsList } from "../../services/studentsClassrooms";
+import AuthContext from "../../context/AuthContext";
 
 const ListClassroomCards = () => {
   const [classrooms, setClassrooms] = useState([]);
-  const { createModalOpen } = useContext(ClassroomContext);
+  const { createModalOpen, joinModalOpen } = useContext(ClassroomContext);
+  const { auth } = useContext(AuthContext);
+
   useEffect(() => {
-    const fetchClassroomList = async () => {
-      try {
-        const response = await getClassroomList();
-        setClassrooms(response.data);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    fetchClassroomList();
-  }, [createModalOpen]);
+    auth.role === "teacher"
+      ? fetchClassroomList()
+      : fetchStudentsClassroomList();
+  }, [createModalOpen, joinModalOpen]);
+
+  const fetchClassroomList = async () => {
+    try {
+      const response = await getClassroomList();
+      setClassrooms(response.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const fetchStudentsClassroomList = async () => {
+    try {
+      const response = await getStudentsClassroomsList();
+      setClassrooms(response.data.map((obj) => obj.classroom));
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="flex flex-col items-center py-8 px-4">
