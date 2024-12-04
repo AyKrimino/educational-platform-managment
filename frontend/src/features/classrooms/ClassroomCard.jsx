@@ -4,24 +4,27 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import CardActionArea from "@mui/material/CardActionArea";
 import CardActions from "@mui/material/CardActions";
+import { useContext } from "react";
+import AuthContext from "../../context/AuthContext";
 
-const ClassroomCard = () => {
+const ClassroomCard = ({ classroomName, teacherName }) => {
+  const { auth } = useContext(AuthContext);
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
-            Operating Systems Course
+            {classroomName}
           </Typography>
-          <Typography>Instructor: Imed Ben Youness</Typography>
+          <Typography>Instructor: {teacherName}</Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }}>
             Students number: 15
           </Typography>
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="warning">
-          Leave
+        <Button size="small" color="error">
+          {auth.role === "teacher" ? "delete" : "Leave"}
         </Button>
       </CardActions>
     </Card>

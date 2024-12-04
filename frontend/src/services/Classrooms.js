@@ -26,3 +26,13 @@ export const joinClassroom = async (classroomId) => {
         throw error;
     }
 };
+
+export const getClassroomList = async () => {
+    try {
+      const response = await axiosInstance.get("/classrooms/");
+      return response;
+    } catch (error) {
+      throw error;
+    }
+  };
+  

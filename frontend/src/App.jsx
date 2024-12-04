@@ -8,6 +8,7 @@ import PublicRoute from "./components/PublicRoute";
 import AccountPage from "./pages/AccountPage";
 import PrivateLayout from "./layouts/PrivateLayout";
 import ProfilePictureProvider from "./providers/ProfilePictureProvider";
+import ClassroomProvider from "./providers/ClassroomProvider";
 
 const publicRoutes = [
   { path: "/", component: Login },
@@ -44,7 +45,9 @@ const App = () => {
               element={
                 <PrivateRoute>
                   <ProfilePictureProvider>
-                    <PrivateLayout />
+                    <ClassroomProvider>
+                      <PrivateLayout />
+                    </ClassroomProvider>
                   </ProfilePictureProvider>
                 </PrivateRoute>
               }

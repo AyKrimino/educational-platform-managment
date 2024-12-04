@@ -13,17 +13,12 @@ import teacherImage from "../assets/images/teacher.png";
 import AuthContext from "../context/AuthContext";
 import CreateClassroomModal from "./CreateClassroomModal";
 import JoinClassroomModal from "./JoinClassroomModal";
+import ClassroomContext from "../context/ClassroomContext";
 
 const WelcomeBack = () => {
   const { auth } = useContext(AuthContext);
-  const [createModalOpen, setCreateModalOpen] = useState(false);
-  const [joinModalOpen, setJoinModalOpen] = useState(false);
-
-  const handleCreateModalOpen = () => setCreateModalOpen(true);
-  const handleCreateModalClose = () => setCreateModalOpen(false);
-
-  const handleJoinModalOpen = () => setJoinModalOpen(true);
-  const handleJoinModalClose = () => setJoinModalOpen(false);
+  const { handleCreateModalOpen, handleJoinModalOpen } =
+    useContext(ClassroomContext);
 
   return (
     <Container>
@@ -100,14 +95,8 @@ const WelcomeBack = () => {
           </Card>
         </Grid>
       </Grid>
-      <CreateClassroomModal
-        open={createModalOpen}
-        handleClose={handleCreateModalClose}
-      />
-      <JoinClassroomModal
-        open={joinModalOpen}
-        handleClose={handleJoinModalClose}
-      />
+      <CreateClassroomModal />
+      <JoinClassroomModal />
     </Container>
   );
 };
