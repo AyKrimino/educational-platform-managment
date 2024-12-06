@@ -7,6 +7,7 @@ import CardActions from "@mui/material/CardActions";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { removeStudentFromClassroom } from "../../services/studentsClassrooms";
+import { deleteClassroom } from "../../services/Classrooms";
 
 const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount, onLeave }) => {
   const { auth } = useContext(AuthContext);
@@ -24,6 +25,15 @@ const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount,
       console.error("Error leaving classroom: ", error);
     }
   };
+
+  const handleDeleteClassroom = async () => {
+    try {
+      await deleteClassroom(classroomId);
+      onLeave(classroomId);
+    } catch (error) {
+      console.error("Error deleting classroom:", error);
+    }
+  }
 
   return (
     <Card sx={{ maxWidth: 345 }}>
@@ -44,7 +54,7 @@ const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount,
         <Button 
           size="small"
           color="error"
-          onClick={auth.role === "student" ? handleLeaveClassroom : null}
+          onClick={auth.role === "student" ? handleLeaveClassroom : handleDeleteClassroom}
         >
           {auth.role === "teacher" ? "Delete" : "Leave"}
         </Button>
