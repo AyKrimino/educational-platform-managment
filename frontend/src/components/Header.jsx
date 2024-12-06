@@ -13,7 +13,7 @@ import AuthContext from "../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import ProfilePictureContext from "../context/ProfilePictureContext";
 
-const settings = ["Account", "Home", "Logout"];
+const settings = ["Account", "Home", "Classrooms", "Logout"];
 
 const StyledBadge = styled(Badge)(({ theme }) => ({
   "& .MuiBadge-badge": {
@@ -63,10 +63,15 @@ const Header = () => {
     navigate("/");
   };
 
+  const handleClassrooms = () => {
+    navigate("/classrooms");
+  }
+
   const settingsHandlers = {
     Account: handleAccount,
     Home: handleHome,
     Logout: handleLogout,
+    Classrooms: handleClassrooms,
   };
 
   const handleOpenUserMenu = (event) => {
