@@ -60,21 +60,33 @@ const ListClassroomCards = () => {
 
   return (
     <div className="flex flex-col items-center py-8 px-4">
-      <div className="mb-8">
-        <Typography variant="h5">Your Classrooms</Typography>
-      </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {classrooms.map((classroom) => (
-          <ClassroomCard
-            key={classroom.id}
-            classroomId={classroom.id}
-            classroomName={classroom.name}
-            teacherName={`${classroom.teacher.user_first_name} ${classroom.teacher.user_last_name}`}
-            studentsCount={classroom.studentsCount}
-            onLeave={handleLeaveClassroom}
-          />
-        ))}
-      </div>
+      {classrooms.length > 0 ? (
+        <>
+          <div className="mb-8">
+            <Typography variant="h5">Your Classrooms</Typography>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+            {classrooms.map((classroom) => (
+              <ClassroomCard
+                key={classroom.id}
+                classroomId={classroom.id}
+                classroomName={classroom.name}
+                teacherName={`${classroom.teacher.user_first_name} ${classroom.teacher.user_last_name}`}
+                studentsCount={classroom.studentsCount}
+                onLeave={handleLeaveClassroom}
+              />
+            ))}
+          </div>
+        </>
+      ) : (
+          <div className="mb-8">
+            <Typography variant="h5" align="center">
+              {auth.role === "teacher"
+                ? "You haven't created any classrooms yet."
+                : "You haven't joined any classrooms yet."}
+            </Typography>
+          </div>
+        )}
     </div>
   );
 };
