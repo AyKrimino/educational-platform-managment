@@ -25,6 +25,7 @@ import {
 import dayjs from "dayjs";
 import { useNavigate } from "react-router-dom";
 import ProfilePictureContext from "../context/ProfilePictureContext";
+import BreadcrumbNav from "../components/BreadcrumbNav";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL;
 
@@ -161,6 +162,7 @@ const AccountPage = () => {
 
   return (
     <div className="h-[100%] w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
+      <BreadcrumbNav currentPage="Account" />
       <div className="max-w-4xl mx-auto p-8">
         <h1 className="text-3xl font-bold mb-6">Account Settings</h1>
 
