@@ -8,11 +8,13 @@ import {
   getStudentsClassroomsList,
 } from "../../services/studentsClassrooms";
 import AuthContext from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const ListClassroomCards = ({ limit }) => {
   const [classrooms, setClassrooms] = useState([]);
   const { createModalOpen, joinModalOpen } = useContext(ClassroomContext);
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   useEffect(() => {
     auth.role === "teacher"
@@ -58,6 +60,10 @@ const ListClassroomCards = ({ limit }) => {
     );
   }
 
+  const handleCardClick = (classroomId) => {
+    navigate(`/classroom/${classroomId}`);
+  };
+
   const displayedClassrooms = limit
     ? classrooms.slice(0, limit)
     : classrooms;
@@ -78,6 +84,7 @@ const ListClassroomCards = ({ limit }) => {
                 teacherName={`${classroom.teacher.user_first_name} ${classroom.teacher.user_last_name}`}
                 studentsCount={classroom.studentsCount}
                 onLeave={handleLeaveClassroom}
+                onClick={() => handleCardClick(classroom.id)}
               />
             ))}
           </div>

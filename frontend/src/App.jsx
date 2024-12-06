@@ -10,6 +10,7 @@ import PrivateLayout from "./layouts/PrivateLayout";
 import ProfilePictureProvider from "./providers/ProfilePictureProvider";
 import ClassroomProvider from "./providers/ClassroomProvider";
 import ClassroomsPage from "./pages/ClassroomsPage";
+import ClassroomPage from "./pages/ClassroomPage";
 
 const publicRoutes = [
   { path: "/", component: Login },
@@ -19,6 +20,7 @@ const protectedRoutes = [
   { path: "/home", component: Home },
   { path: "/account", component: AccountPage },
   { path: "/classrooms", component: ClassroomsPage },
+  { path: "/classroom/:classroomId", component: ClassroomPage },
 ];
 
 const App = () => {
@@ -40,23 +42,23 @@ const App = () => {
           ))}
 
           {/* Protected routes for authenticated users only */}
-          {protectedRoutes.map(({ path, component: Component }) => (
-            <Route
-              key={path}
-              path={path}
-              element={
-                <PrivateRoute>
-                  <ProfilePictureProvider>
-                    <ClassroomProvider>
-                      <PrivateLayout />
-                    </ClassroomProvider>
-                  </ProfilePictureProvider>
-                </PrivateRoute>
-              }
-            >
-              <Route path={path} element={<Component />} />
-            </Route>
-          ))}
+          <Route
+            element={
+              <PrivateRoute>
+                <ProfilePictureProvider>
+                  <ClassroomProvider>
+                    <PrivateLayout />
+                  </ClassroomProvider>
+                </ProfilePictureProvider>
+              </PrivateRoute>
+            }
+          >
+            {protectedRoutes.map(({ path, component: Component }) => (
+              <Route key={path} path={path} element={<Component />} />
+            ))}
+          </Route>
+
+          <Route path="*" element={<div>Route not found</div>} />
         </Routes>
       </Router>
     </AuthProvider>

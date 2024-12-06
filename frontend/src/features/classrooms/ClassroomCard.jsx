@@ -9,7 +9,7 @@ import AuthContext from "../../context/AuthContext";
 import { removeStudentFromClassroom } from "../../services/studentsClassrooms";
 import { deleteClassroom } from "../../services/Classrooms";
 
-const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount, onLeave }) => {
+const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount, onLeave, onClick }) => {
   const { auth } = useContext(AuthContext);
 
   const handleLeaveClassroom = async () => {
@@ -36,7 +36,7 @@ const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount,
   }
 
   return (
-    <Card sx={{ maxWidth: 345 }}>
+    <Card sx={{ maxWidth: 345 }} onClick={onClick}>
       <CardActionArea>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
