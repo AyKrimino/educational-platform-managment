@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import { useState, useEffect, useContext } from "react";
 import {
   Container,
   Grid,
@@ -14,11 +14,34 @@ import AuthContext from "../context/AuthContext";
 import CreateClassroomModal from "./CreateClassroomModal";
 import JoinClassroomModal from "./JoinClassroomModal";
 import ClassroomContext from "../context/ClassroomContext";
+import { getTeacherAccount, getStudentAccount } from "../services/profilesService";
 
 const WelcomeBack = () => {
   const { auth } = useContext(AuthContext);
   const { handleCreateModalOpen, handleJoinModalOpen } =
     useContext(ClassroomContext);
+
+  const [username, setUsername] = useState("");
+
+  useEffect(
+    () => {
+      const fetchUserData = async () => {
+        try {
+          if (auth.role === "teacher") {
+            const teacherData = await getTeacherAccount(auth.access);
+            setUsername(`${teacherData.user_first_name} ${teacherData.user_last_name}`);
+          } else {
+            const studentData = await getStudentAccount(auth.access);
+            setUsername(`${studentData.user_first_name} ${studentData.user_last_name}`);
+          }
+        } catch (error) {
+          console.error("Error fetching user data: ", error);
+          setUsername("username");
+        }
+      };
+      fetchUserData();
+    }, [auth.role, auth.access]
+  );
 
   return (
     <Container>
@@ -44,7 +67,7 @@ const WelcomeBack = () => {
                       },
                     }}
                   >
-                    <Typography variant="h5">Welcome back Natalia!</Typography>
+                    <Typography variant="h5">Welcome back {username}!</Typography>
                     <Typography
                       variant="subtitle1"
                       color="textSecondary"
