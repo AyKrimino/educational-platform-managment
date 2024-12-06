@@ -9,7 +9,7 @@ import {
 } from "../../services/studentsClassrooms";
 import AuthContext from "../../context/AuthContext";
 
-const ListClassroomCards = () => {
+const ListClassroomCards = ({ limit }) => {
   const [classrooms, setClassrooms] = useState([]);
   const { createModalOpen, joinModalOpen } = useContext(ClassroomContext);
   const { auth } = useContext(AuthContext);
@@ -58,15 +58,19 @@ const ListClassroomCards = () => {
     );
   }
 
+  const displayedClassrooms = limit
+    ? classrooms.slice(0, limit)
+    : classrooms;
+
   return (
     <div className="flex flex-col items-center py-8 px-4">
-      {classrooms.length > 0 ? (
+      {displayedClassrooms.length > 0 ? (
         <>
           <div className="mb-8">
             <Typography variant="h5">Your Classrooms</Typography>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {classrooms.map((classroom) => (
+            {displayedClassrooms.map((classroom) => (
               <ClassroomCard
                 key={classroom.id}
                 classroomId={classroom.id}

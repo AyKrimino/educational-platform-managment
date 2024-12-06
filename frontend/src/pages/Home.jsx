@@ -11,7 +11,7 @@ const Home = () => {
   return (
     <div className="h-[100%] w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
       <WelcomeBack />
-      <ListClassroomCards />
+      <ListClassroomCards limit={8} />
     </div>
   );
 };
