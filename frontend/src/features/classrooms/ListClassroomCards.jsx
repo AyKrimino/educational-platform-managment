@@ -50,18 +50,28 @@ const ListClassroomCards = () => {
     }
   };
 
+  const handleLeaveClassroom = (classroomId) => {
+    setClassrooms(
+      (prevClassrooms) => prevClassrooms.filter(
+        (classroom) => classroom.id !== classroomId
+      )
+    );
+  }
+
   return (
     <div className="flex flex-col items-center py-8 px-4">
       <div className="mb-8">
         <Typography variant="h5">Your Classrooms</Typography>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-        {classrooms.map((classroom, index) => (
+        {classrooms.map((classroom) => (
           <ClassroomCard
-            key={index}
+            key={classroom.id}
+            classroomId={classroom.id}
             classroomName={classroom.name}
             teacherName={`${classroom.teacher.user_first_name} ${classroom.teacher.user_last_name}`}
             studentsCount={classroom.studentsCount}
+            onLeave={handleLeaveClassroom}
           />
         ))}
       </div>

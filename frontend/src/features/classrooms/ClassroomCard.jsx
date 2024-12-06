@@ -6,9 +6,25 @@ import CardActionArea from "@mui/material/CardActionArea";
 import CardActions from "@mui/material/CardActions";
 import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
+import { removeStudentFromClassroom } from "../../services/studentsClassrooms";
 
-const ClassroomCard = ({ classroomName, teacherName, studentsCount }) => {
+const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount, onLeave }) => {
   const { auth } = useContext(AuthContext);
+
+  const handleLeaveClassroom = async () => {
+    try {
+      const base64Url = auth.access.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const payload = JSON.parse(atob(base64));
+      const userId = payload.user_id;
+
+      await removeStudentFromClassroom(userId, classroomId);
+      onLeave(classroomId);
+    } catch (error) {
+      console.error("Error leaving classroom: ", error);
+    }
+  };
+
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardActionArea>
@@ -17,16 +33,20 @@ const ClassroomCard = ({ classroomName, teacherName, studentsCount }) => {
             {classroomName}
           </Typography>
           <Typography>Instructor: {teacherName}</Typography>
-          {auth.role === "teacher" && 
+          {auth.role === "teacher" && (
             <Typography variant="body2" sx={{ color: "text.secondary" }}>
               Students number: {studentsCount}
             </Typography>
-          }
+          )}
         </CardContent>
       </CardActionArea>
       <CardActions>
-        <Button size="small" color="error">
-          {auth.role === "teacher" ? "delete" : "Leave"}
+        <Button 
+          size="small"
+          color="error"
+          onClick={auth.role === "student" ? handleLeaveClassroom : null}
+        >
+          {auth.role === "teacher" ? "Delete" : "Leave"}
         </Button>
       </CardActions>
     </Card>
@@ -34,3 +54,4 @@ const ClassroomCard = ({ classroomName, teacherName, studentsCount }) => {
 };
 
 export default ClassroomCard;
+

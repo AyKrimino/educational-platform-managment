@@ -27,3 +27,12 @@ export const getClassroomListWithStudentCounts = async () => {
     throw error;
   }
 };
+
+export const removeStudentFromClassroom = async (studentUserId, classroomId) => {
+  try {
+    await axiosInstance.delete(`students-classrooms/delete/${studentUserId}/${classroomId}/`);
+    return { success: true };
+  } catch (error) {
+    throw error;
+  }
+}

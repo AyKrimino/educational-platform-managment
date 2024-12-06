@@ -2,7 +2,8 @@ from django.urls import path
 
 from .views import (ClassroomListAPIView, ClassroomCreateAPIView, ClassroomRetrieveUpdateDestroyAPIView,
                     StudentClassroomListAPIView,
-                    StudentClassroomCreateAPIView, StudentClassroomRetrieveDestroyAPIView)
+                    StudentClassroomCreateAPIView, StudentClassroomRetrieveDestroyAPIView, 
+                    StudentLeaveClassroomAPIView)
 
 app_name = "classroom"
 
@@ -14,4 +15,6 @@ urlpatterns = [
     path("students-classrooms/create/", StudentClassroomCreateAPIView.as_view(), name="students-classrooms-create"),
     path("students-classrooms/<uuid:student_id>/<uuid:classroom_id>/", StudentClassroomRetrieveDestroyAPIView.as_view(),
          name="students-classrooms-detail"),
+    path("students-classrooms/delete/<int:student_user_id>/<uuid:classroom_id>/", StudentLeaveClassroomAPIView.as_view(),
+         name="student-leave-classroom"),
 ]

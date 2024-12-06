@@ -453,3 +453,23 @@ class StudentClassroomRetrieveDestroyAPIView(APIView):
         student_classroom = self.get_object(student_id, classroom_id)
         student_classroom.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StudentLeaveClassroomAPIView(APIView):
+    permission_classes = [IsStudentOrTeacher, IsClassroomMember, IsAuthenticated]
+
+    def get_object(self, student_user_id, classroom_id):
+        try:
+            student = StudentProfile.objects.get(user_id=student_user_id)
+            classroom = Classroom.objects.get(id=classroom_id)
+            student_classroom = StudentClassroom.objects.get(student=student, classroom=classroom)
+            self.check_object_permissions(self.request, classroom)
+            return student_classroom
+        except (StudentProfile.DoesNotExist, Classroom.DoesNotExist, StudentClassroom.DoesNotExist):
+            raise Http404
+
+    def delete(self, request, student_user_id, classroom_id, *args, **kwargs):
+        self.check_permissions(request)
+        student_classroom = self.get_object(student_user_id, classroom_id)
+        student_classroom.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
