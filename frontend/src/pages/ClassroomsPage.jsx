@@ -1,7 +1,7 @@
 import BreadcrumbNav from "../components/BreadcrumbNav";
 import ListClassroomCards from "../features/classrooms/ListClassroomCards";
 
-const ClassroomPage = () => {
+const ClassroomsPage = () => {
   return (
     <div className="h-[100%] w-[100%] overflow-y-auto overflow-x-hidden bg-gray-100">
       <BreadcrumbNav currentPage="Classrooms" />
@@ -12,5 +12,5 @@ const ClassroomPage = () => {
   );
 };
 
-export default ClassroomPage;
+export default ClassroomsPage;
 

@@ -9,7 +9,7 @@ import AccountPage from "./pages/AccountPage";
 import PrivateLayout from "./layouts/PrivateLayout";
 import ProfilePictureProvider from "./providers/ProfilePictureProvider";
 import ClassroomProvider from "./providers/ClassroomProvider";
-import ClassroomPage from "./pages/ClassroomPage";
+import ClassroomsPage from "./pages/ClassroomsPage";
 
 const publicRoutes = [
   { path: "/", component: Login },
@@ -18,7 +18,7 @@ const publicRoutes = [
 const protectedRoutes = [
   { path: "/home", component: Home },
   { path: "/account", component: AccountPage },
-  { path: "/classrooms", component: ClassroomPage },
+  { path: "/classrooms", component: ClassroomsPage },
 ];
 
 const App = () => {
