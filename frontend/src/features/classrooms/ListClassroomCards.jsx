@@ -3,7 +3,10 @@ import ClassroomCard from "./ClassroomCard";
 import { Typography } from "@mui/material";
 import { getClassroomList } from "../../services/Classrooms";
 import ClassroomContext from "../../context/ClassroomContext";
-import { getStudentsClassroomsList } from "../../services/studentsClassrooms";
+import {
+  getClassroomListWithStudentCounts,
+  getStudentsClassroomsList,
+} from "../../services/studentsClassrooms";
 import AuthContext from "../../context/AuthContext";
 
 const ListClassroomCards = () => {
@@ -13,14 +16,26 @@ const ListClassroomCards = () => {
 
   useEffect(() => {
     auth.role === "teacher"
-      ? fetchClassroomList()
+      ? fetchTeacherClassrooms()
       : fetchStudentsClassroomList();
   }, [createModalOpen, joinModalOpen]);
 
-  const fetchClassroomList = async () => {
+  const fetchTeacherClassrooms = async () => {
     try {
-      const response = await getClassroomList();
-      setClassrooms(response.data);
+      const [allClassroomsResponse, classroomsWithStudentsResponse] =
+        await Promise.all([
+          getClassroomList(),
+          getClassroomListWithStudentCounts(),
+        ]);
+
+      const combinedClassrooms = allClassroomsResponse.data.map(
+        (classroom) => ({
+          ...classroom,
+          studentsCount:
+            classroomsWithStudentsResponse[classroom.id]?.studentsCount || 0,
+        })
+      );
+      setClassrooms(combinedClassrooms);
     } catch (error) {
       console.error(error);
     }
@@ -46,6 +61,7 @@ const ListClassroomCards = () => {
             key={index}
             classroomName={classroom.name}
             teacherName={`${classroom.teacher.user_first_name} ${classroom.teacher.user_last_name}`}
+            studentsCount={classroom.studentsCount}
           />
         ))}
       </div>
