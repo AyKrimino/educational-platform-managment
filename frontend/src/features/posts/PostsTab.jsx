@@ -10,11 +10,10 @@ import {
 } from "@mui/material";
 import AuthContext from "../../context/AuthContext";
 import {
-  createComment,
   createPost,
-  getCommentsListByClassroomIdAndPostId,
   getPostsListByClassroomId,
 } from "../../services/postsServices";
+import CommentsSection from "./CommentsSection";
 
 const PostsTab = ({ classroomId }) => {
   const { auth } = useContext(AuthContext);
@@ -138,121 +137,5 @@ const PostsTab = ({ classroomId }) => {
   );
 };
 
-const CommentsSection = ({ classroomId, postId }) => {
-  const { auth } = useContext(AuthContext);
-  const [comments, setComments] = useState([]);
-  const [newComment, setNewComment] = useState("");
-  const [refresh, setRefresh] = useState(false);
-
-  useEffect(() => {
-    const fetchComments = async () => {
-      try {
-        const response = await getCommentsListByClassroomIdAndPostId(
-          classroomId,
-          postId,
-        );
-        setComments(response.data);
-      } catch (error) {
-        console.error("Error fetching comment:", error);
-      }
-    };
-
-    fetchComments();
-  }, [postId, classroomId, refresh]);
-
-  const handleAddComment = async () => {
-    if (newComment.trim()) {
-      const commentData = {
-        content: newComment,
-      };
-      try {
-        await createComment(classroomId, postId, commentData);
-        setRefresh((prev) => !prev);
-      } catch (error) {
-        console.error("Erorr creating comment:", error);
-      }
-      setNewComment("");
-    }
-  };
-
-  return (
-    <Box
-      sx={{
-        px: 3,
-        py: 4,
-        maxWidth: "800px",
-        margin: "0 auto",
-      }}
-    >
-      {/* Comments Section */}
-      <Typography variant="h6" gutterBottom>
-        Comments:
-      </Typography>
-
-      {comments.length > 0 ? (
-        comments.map((comment) => (
-          <Box
-            key={comment.id}
-            sx={{
-              mb: 2,
-              p: 2,
-              borderLeft: "3px solid #1976d2",
-              boxShadow: "0 3px 8px rgba(0,0,0,0.2)",
-              borderRadius: 2,
-            }}
-          >
-            <Typography variant="body2">{comment.content}</Typography>
-            <Typography variant="body2" color="textSecondary">
-              - By {`${comment.user.first_name} ${comment.user.last_name}`}
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              created at &nbsp;
-              {`${new Date(
-                comment.created_at,
-              ).toLocaleTimeString()} - ${new Date(
-                comment.created_at,
-              ).toLocaleDateString()}`}
-            </Typography>
-          </Box>
-        ))
-      ) : (
-        <Typography variant="body2" color="textSecondary">
-          No comments yet.
-        </Typography>
-      )}
-
-      {/* Add Comment Section */}
-      {auth.role && (
-        <Box mt={3} sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-          <TextField
-            label="Add a Comment"
-            value={newComment}
-            onChange={(e) => setNewComment(e.target.value)}
-            fullWidth
-            variant="outlined"
-            multiline
-            rows={3}
-          />
-          <Button
-            variant="contained"
-            color="primary"
-            onClick={handleAddComment}
-            sx={{
-              textTransform: "none",
-              fontWeight: "bold",
-              boxShadow: "0 3px 5px rgba(0,0,0,0.2)",
-              ":hover": {
-                backgroundColor: "#1976d2",
-                boxShadow: "0 4px 6px rgba(0,0,0,0.3)",
-              },
-            }}
-          >
-            Comment
-          </Button>
-        </Box>
-      )}
-    </Box>
-  );
-};
 
 export default PostsTab;

@@ -121,3 +121,61 @@ export const createComment = async (classroomId, postId, commentData) => {
     throw new Error(`An unexpected error occurred: ${error.message}`);
   }
 };
+
+/**
+ * Fetches a specific comment for a given post in a classroom.
+ *
+ * @async
+ * @function getComment
+ * @param {string} classroomId - The UUID of the classroom containing the post.
+ * @param {string} postId - The UUID of the post containing the comment.
+ * @param {string} commentId - The UUID of the comment to fetch.
+ * @returns {Promise<Object>} - A promise that resolves to the server's response containing the details of the comment.
+ * @throws {Error} - Throws an error if the request fails, with details about the issue.
+ *
+ * @example
+ * const comment = await getComment(
+ *   "cf47e074-e9f3-4fcf-9ec2-c2a701150bda",
+ *   "ab23cd45-ef67-gh89-ij01-klmnopqr2345",
+ *   "897f6eca-6276-4993-bfeb-53cbbbba6f08"
+ * );
+ * console.log(comment.data);
+ */
+export const getComment = async (classroomId, postId, commentId) => {
+  try {
+    const response = await axiosInstance.get(
+      `/classrooms/${classroomId}/posts/${postId}/comments/${commentId}/`,
+    );
+    return response;
+  } catch (error) {
+    throw new Error(`An unexpected error occurred: ${error.message}`);
+  }
+};
+
+export const deleteComment = async (classroomId, postId, commentId) => {
+  try {
+    const response = await axiosInstance.delete(
+      `/classrooms/${classroomId}/posts/${postId}/comments/${commentId}/`,
+    );
+    return response;
+  } catch (error) {
+    throw new Error(`An unexpected error occurred: ${error.message}`);
+  }
+};
+
+export const updateComment = async (
+  classroomId,
+  postId,
+  commentId,
+  commentData,
+) => {
+  try {
+    const response = await axiosInstance.put(
+      `/classrooms/${classroomId}/posts/${postId}/comments/${commentId}/`,
+      commentData,
+    );
+    return response;
+  } catch (error) {
+    throw new Error(`An unexpected error occurred: ${error.message}`);
+  }
+};
