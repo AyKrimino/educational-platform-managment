@@ -44,11 +44,77 @@ export const getPostsListByClassroomId = async (classroomId) => {
  * const response = await createPost("cf47e074-e9f3-4fcf-9ec2-c2a701150bda", newPost);
  * console.log(response.data);
  */
-export const createPost = async (classroomId, classroomData) => {
+export const createPost = async (classroomId, postData) => {
   try {
     const response = await axiosInstance.post(
       `/classrooms/${classroomId}/posts/create/`,
-      classroomData,
+      postData,
+    );
+    return response;
+  } catch (error) {
+    throw new Error(`An unexpected error occurred: ${error.message}`);
+  }
+};
+
+/**
+ * Fetches the list of comments for a specific post in a classroom.
+ *
+ * @async
+ * @function getCommentsListByClassroomIdAndPostId
+ * @param {string} classroomId - The UUID of the classroom containing the post.
+ * @param {string} postId - The UUID of the post whose comments are to be fetched.
+ * @returns {Promise<Object>} - A promise that resolves to the server's response containing the list of comments.
+ * @throws {Error} - Throws an error if the request fails, with details about the issue.
+ *
+ * @example
+ * const comments = await getCommentsListByClassroomIdAndPostId(
+ *   "cf47e074-e9f3-4fcf-9ec2-c2a701150bda",
+ *   "ab23cd45-ef67-gh89-ij01-klmnopqr2345"
+ * );
+ * console.log(comments.data);
+ */
+export const getCommentsListByClassroomIdAndPostId = async (
+  classroomId,
+  postId,
+) => {
+  try {
+    const response = await axiosInstance.get(
+      `/classrooms/${classroomId}/posts/${postId}/comments/`,
+    );
+    return response;
+  } catch (error) {
+    throw new Error(`An unexpected error occurred: ${error.message}`);
+  }
+};
+
+/**
+ * Creates a new comment for a specific post in a classroom.
+ *
+ * @async
+ * @function createComment
+ * @param {string} classroomId - The UUID of the classroom containing the post.
+ * @param {string} postId - The UUID of the post where the comment is to be created.
+ * @param {Object} commentData - The data for the new comment.
+ * @param {string} commentData.content - The content of the comment.
+ * @returns {Promise<Object>} - A promise that resolves to the server's response confirming the comment creation.
+ * @throws {Error} - Throws an error if the request fails, with details about the issue.
+ *
+ * @example
+ * const newComment = {
+ *   content: "This is a great post! Thank you for sharing."
+ * };
+ * const response = await createComment(
+ *   "cf47e074-e9f3-4fcf-9ec2-c2a701150bda",
+ *   "ab23cd45-ef67-gh89-ij01-klmnopqr2345",
+ *   newComment
+ * );
+ * console.log(response.data);
+ */
+export const createComment = async (classroomId, postId, commentData) => {
+  try {
+    const response = await axiosInstance.post(
+      `/classrooms/${classroomId}/posts/${postId}/comments/create/`,
+      commentData,
     );
     return response;
   } catch (error) {
