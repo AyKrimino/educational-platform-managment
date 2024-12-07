@@ -40,12 +40,14 @@ const ClassroomPage = () => {
         <Typography variant="h4" sx={{ fontWeight: "bold" }}>
           Classroom: {classroomName}
         </Typography>
+        {auth.role === "student" &&
         <Typography
           variant="subtitle1"
           sx={{ color: "text.secondary", fontStyle: "italic" }}
         >
           Instructor: {teacherName}
         </Typography>
+        }
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
