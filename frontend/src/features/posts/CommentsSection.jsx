@@ -19,7 +19,7 @@ const CommentsSection = ({ classroomId, postId }) => {
   const [refresh, setRefresh] = useState(false);
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
-  const [showAllComments, setShowAllComments] = useState(false); // State for toggling comments
+  const [showAllComments, setShowAllComments] = useState(false); 
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -51,13 +51,21 @@ const CommentsSection = ({ classroomId, postId }) => {
   };
 
   const handleEditComment = async (commentId, content) => {
-    console.log(`Edit comment ID: ${commentId}, new content: ${content}`);
+    try {
+      await updateComment(classroomId, postId, commentId, {content}); 
+    } catch (error) {
+      console.error("Error updating comment:", error);
+    }
     setEditingCommentId(null);
     setRefresh((prev) => !prev);
   };
 
   const handleDeleteComment = async (commentId) => {
-    console.log(`Delete comment ID: ${commentId}`);
+    try {
+      await deleteComment(classroomId, postId, commentId);
+    } catch (error) {
+      console.error("Error deleting comment:", error);
+    }
     setRefresh((prev) => !prev);
   };
 
