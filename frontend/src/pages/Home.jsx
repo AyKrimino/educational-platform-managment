@@ -6,11 +6,13 @@ import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { getClassroomList } from "../services/Classrooms";
 import { getStudentsClassroomsList } from "../services/studentsClassrooms";
+import ClassroomContext from "../context/ClassroomContext";
 
 const Home = () => {
   const { auth } = useContext(AuthContext);
   const navigate = useNavigate();
   const [hasClassrooms, setHasClassrooms] = useState(false);
+  const { createModalOpen, joinModalOpen } = useContext(ClassroomContext);
 
   useEffect(() => {
     const fetchClassrooms = async () => {
@@ -29,7 +31,7 @@ const Home = () => {
     };
 
     fetchClassrooms();
-  }, [auth.role]);
+  }, [auth.role, createModalOpen, joinModalOpen]);
 
   if (!auth) return <p>Loading...</p>;
 

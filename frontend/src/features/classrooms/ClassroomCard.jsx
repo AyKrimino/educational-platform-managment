@@ -8,9 +8,11 @@ import { useContext } from "react";
 import AuthContext from "../../context/AuthContext";
 import { removeStudentFromClassroom } from "../../services/studentsClassrooms";
 import { deleteClassroom } from "../../services/Classrooms";
+import { useNavigate } from "react-router-dom";
 
 const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount, onLeave, onClick }) => {
   const { auth } = useContext(AuthContext);
+  const navigate = useNavigate();
 
   const handleLeaveClassroom = async () => {
     try {
@@ -24,6 +26,7 @@ const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount,
     } catch (error) {
       console.error("Error leaving classroom: ", error);
     }
+    navigate("/home");
   };
 
   const handleDeleteClassroom = async () => {
@@ -33,11 +36,16 @@ const ClassroomCard = ({ classroomId, classroomName, teacherName, studentsCount,
     } catch (error) {
       console.error("Error deleting classroom:", error);
     }
+    navigate("/home");
   }
+
+  const handleCardClick = (classroomId) => {
+    navigate(`/classroom/${classroomId}`);
+  };
 
   return (
     <Card sx={{ maxWidth: 345 }} onClick={onClick}>
-      <CardActionArea>
+      <CardActionArea onClick={() => handleCardClick(classroomId)}>
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             {classroomName}
