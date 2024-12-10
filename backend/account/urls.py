@@ -5,7 +5,9 @@ from .views import (TeacherProfileListAPIView,
                     TeacherProfileByUserAPIView,
                     StudentProfileListAPIView,
                     StudentProfileRetrieveUpdateDestroyAPIView,
-                    StudentProfileByUserAPIView)
+                    StudentProfileByUserAPIView,
+                    TeacherProfileByUserIdAPIView,
+                    StudentProfileByUserIdAPIView)
 
 app_name = "account"
 
@@ -16,4 +18,6 @@ urlpatterns = [
     path("profiles/students/", StudentProfileListAPIView.as_view(), name="students-list"),
     path("profiles/students/<uuid:pk>/", StudentProfileRetrieveUpdateDestroyAPIView.as_view(), name="students-detail"),
     path("profiles/students/me/", StudentProfileByUserAPIView.as_view(), name="student-profile-by-user"),
+    path("profiles/teachers/<int:user_id>/", TeacherProfileByUserIdAPIView.as_view(), name="teacher-profile-by-user-id"),
+    path("profiles/students/<int:user_id>/", StudentProfileByUserIdAPIView.as_view(), name="student-profile-by-user-id"),
 ]

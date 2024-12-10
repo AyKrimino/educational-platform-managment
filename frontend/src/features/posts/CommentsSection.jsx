@@ -8,6 +8,10 @@ import {
   getCommentsListByClassroomIdAndPostId,
   updateComment,
 } from "../../services/postsServices";
+import {
+  getTeacherProfileByUserId,
+  getStudentProfileByUserId,
+} from "../../services/profilesService";
 import CommentHeader from "./CommentHeader";
 
 const BASE_URL = import.meta.env.VITE_PUBLIC_BASE_URL;
@@ -20,15 +24,24 @@ const CommentsSection = ({ classroomId, postId }) => {
   const [editingCommentId, setEditingCommentId] = useState(null);
   const [editedContent, setEditedContent] = useState("");
   const [showAllComments, setShowAllComments] = useState(false); 
-
+  
   useEffect(() => {
     const fetchComments = async () => {
       try {
         const response = await getCommentsListByClassroomIdAndPostId(
           classroomId,
-          postId,
+          postId
         );
-        setComments(response.data);
+        const commentsWithAvatars = await Promise.all(
+          response.data.map(async (comment) => {
+            const avatarUrl = await getCommentAuthorAvatar(
+              comment.user.id,
+              comment.user.is_teacher
+            );
+            return { ...comment, avatarUrl };
+          })
+        );
+        setComments(commentsWithAvatars);
       } catch (error) {
         console.error("Error fetching comments:", error);
       }
@@ -92,6 +105,20 @@ const CommentsSection = ({ classroomId, postId }) => {
     return false;
   };
 
+  const getCommentAuthorAvatar = async (userId, isTeacher) => {
+    try {
+      if (isTeacher) {
+        const response = await getTeacherProfileByUserId(userId);
+        return `${BASE_URL}${response.data.profile_picture}`; 
+      } else {
+        const response = await getStudentProfileByUserId(userId);
+        return `${BASE_URL}${response.data.profile_picture}`;
+      }
+    } catch (error) {
+      console.error("Error fetching comment author avatar:", error);
+    }
+  }
+
   const commentsToShow = showAllComments ? comments : comments.slice(0, 3);
 
   return (
@@ -123,7 +150,7 @@ const CommentsSection = ({ classroomId, postId }) => {
           >
             <Avatar
               alt="User Profile"
-              src={`${BASE_URL}${comment.user.profile_picture}`}
+              src={comment.avatarUrl}
               sx={{ width: 48, height: 48 }}
             />
 
@@ -140,10 +167,10 @@ const CommentsSection = ({ classroomId, postId }) => {
                   sx={{ mt: 1 }}
                 />
               ) : (
-                <Typography variant="body2" sx={{ mt: 1 }}>
-                  {comment.content}
-                </Typography>
-              )}
+                  <Typography variant="body2" sx={{ mt: 1 }}>
+                    {comment.content}
+                  </Typography>
+                )}
 
               <Box
                 sx={{
@@ -175,38 +202,38 @@ const CommentsSection = ({ classroomId, postId }) => {
                     </Button>
                   </>
                 ) : (
-                  <>
-                    {hasPermissionToPeformAction(comment.user.id, "EDIT") && (
-                      <Button
-                        variant="text"
-                        color="primary"
-                        onClick={() => handleEditClick(comment.id)}
-                        sx={{ textTransform: "none" }}
-                      >
-                        Edit
-                      </Button>
-                    )}
-                    {hasPermissionToPeformAction(comment.user.id, "DELETE") && (
-                      <Button
-                        variant="text"
-                        color="error"
-                        onClick={() => handleDeleteComment(comment.id)}
-                        sx={{ textTransform: "none" }}
-                      >
-                        Delete
-                      </Button>
-                    )}
-                  </>
-                )}
+                    <>
+                      {hasPermissionToPeformAction(comment.user.id, "EDIT") && (
+                        <Button
+                          variant="text"
+                          color="primary"
+                          onClick={() => handleEditClick(comment.id)}
+                          sx={{ textTransform: "none" }}
+                        >
+                          Edit
+                        </Button>
+                      )}
+                      {hasPermissionToPeformAction(comment.user.id, "DELETE") && (
+                        <Button
+                          variant="text"
+                          color="error"
+                          onClick={() => handleDeleteComment(comment.id)}
+                          sx={{ textTransform: "none" }}
+                        >
+                          Delete
+                        </Button>
+                      )}
+                    </>
+                  )}
               </Box>
             </Box>
           </Box>
         ))
       ) : (
-        <Typography variant="body2" color="textSecondary">
-          No comments yet.
-        </Typography>
-      )}
+          <Typography variant="body2" color="textSecondary">
+            No comments yet.
+          </Typography>
+        )}
 
       {comments.length > 3 && (
         <Button

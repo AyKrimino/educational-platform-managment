@@ -381,4 +381,40 @@ class StudentProfileByUserAPIView(APIView):
         user = User.objects.get(id=profile.user.id)
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    
+
+
+class TeacherProfileByUserIdAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly] 
+
+    def get_object(self, user_id):
+        try:
+            profile = TeacherProfile.objects.get(user_id=user_id)
+            self.check_object_permissions(self.request, profile)
+            return profile
+        except TeacherProfile.DoesNotExist:
+            return Http404
+
+    def get(self, request, user_id, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object(user_id)
+        serializer = TeacherProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class StudentProfileByUserIdAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsProfileOwnerOrReadOnly]
+
+    def get_object(self, user_id):
+        try:
+            profile = StudentProfile.objects.get(user_id=user_id)
+            self.check_object_permissions(self.request, profile)
+            return profile
+        except StudentProfile.DoesNotExist:
+            return Http404
+
+    def get(self, request, user_id, *args, **kwargs):
+        self.check_permissions(request)
+        profile = self.get_object(user_id)
+        serializer = StudentProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+

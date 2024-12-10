@@ -115,3 +115,21 @@ export const deleteStudentAccount = async (accessToken) => {
     throw new Error("Unable to delete student account.");
   }
 };
+
+export const getTeacherProfileByUserId = async (userId) => {
+  try {
+    const response = await axiosInstance(`/profiles/teachers/${userId}/`);
+    return response;
+  } catch (error) {
+    throw new Error("Unexpected error has occurred:", error);
+  }
+}
+
+export const getStudentProfileByUserId = async (userId) => {
+  try {
+    const response = await axiosInstance(`/profiles/students/${userId}/`);
+    return response;
+  } catch (error) {
+    throw new Error("Unexpected error has occurred:", error);
+  }
+}
