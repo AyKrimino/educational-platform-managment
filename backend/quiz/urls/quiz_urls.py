@@ -8,4 +8,5 @@ urlpatterns = [
     path('', quiz_views.QuizListAPIView.as_view(), name='quizzes-list'),
     path('create/', quiz_views.QuizCreateAPIView.as_view(), name='quizzes-create'),
     path('<uuid:quiz_id>/', quiz_views.QuizRetrieveUpdateDestroyAPIView.as_view(), name='quizzes-detail'),
+    path('classroom/<uuid:classroom_id>/', quiz_views.QuizListByClassroomAPIView.as_view(), name='quizzes-list-by-classroom'),
 ]

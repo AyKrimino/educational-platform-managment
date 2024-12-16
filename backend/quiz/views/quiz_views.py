@@ -225,3 +225,23 @@ class QuizRetrieveUpdateDestroyAPIView(APIView):
         quiz = self.get_object(quiz_id)
         quiz.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class QuizListByClassroomAPIView(APIView):
+    permission_classes = [IsAuthenticated, IsClassroomMember]
+    
+    def get_objects(self, classroom_id):
+        try:
+            classroom = Classroom.objects.get(id=classroom_id)
+            self.check_object_permissions(self.request, classroom)
+            quizzes = Quiz.objects.filter(classroom=classroom)
+            return quizzes
+        except Classroom.DoesNotExist:
+            raise Http404
+
+    def get(self, request, classroom_id, *args, **kwargs):
+        self.check_permissions(request)
+        quizzes = self.get_objects(classroom_id)
+        serializer = QuizSerializer(quizzes, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
