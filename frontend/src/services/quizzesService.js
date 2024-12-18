@@ -72,6 +72,15 @@ export const getQuestion = async (quizId, questionId) => {
   }
 }
 
+export const getQuestions = async (quizId) => {
+  try {
+    const response = await axiosInstance.get(`/quizzes/${quizId}/questions/`);
+    return response;
+  } catch (error) {
+    throw new Error("An unexpected error occurred:", error.message);
+  }
+}
+
 export const createAnswer = async (quizId, questionId, answerData) => {
   try {
     const response = await axiosInstance.post(`/quizzes/${quizId}/questions/${questionId}/answers/create/`, answerData);
@@ -102,6 +111,24 @@ export const deleteAnswer = async (quizId, questionId, answerId) => {
 export const getAnswer = async (quizId, questionId, answerId) => {
   try {
     const response = await axiosInstance.get(`/quizzes/${quizId}/questions/${questionId}/answers/${answerId}/`);
+    return response;
+  } catch (error) {
+    throw new Error("An unexpected error occurred:", error.message);
+  }
+}
+
+export const getAnswers = async (quizId, questionId) => {
+  try {
+    const response = await axiosInstance.get(`/quizzes/${quizId}/questions/${questionId}/answers/`);
+    return response;
+  } catch (error) {
+    throw new Error("An unexpected error occurred:", error.message);
+  }
+}
+
+export const getQuizzesByClassroomId = async (classroomId) => {
+  try {
+    const response = await axiosInstance.get(`/quizzes/classroom/${classroomId}/`);
     return response;
   } catch (error) {
     throw new Error("An unexpected error occurred:", error.message);
