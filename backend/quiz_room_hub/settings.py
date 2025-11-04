@@ -11,9 +11,19 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-DEBUG = True
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+]
 
 ALLOWED_HOSTS = []
+
+DEBUG = True
+
+if not os.environ.get("DEBUG", "True").lower() == "true":
+    DEBUG = False
+    ALLOWED_HOSTS = [os.getenv("RAILWAY_APP_HOST"), "your-app-name.up.railway.app"]
+    CORS_ALLOWED_ORIGINS = [os.environ.get("RAILWAY_APP_HOST")]
 
 # Application definition
 INSTALLED_APPS = [
@@ -74,10 +84,13 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.mysql",
         "NAME": os.environ.get("DATABASE_NAME"),
-        "HOST": "localhost",
-        "PORT": "3306",
+        "HOST": os.environ.get("DATABASE_HOST"),
+        "PORT": os.environ.get("DATABASE_PORT"),
         "USER": os.environ.get("DATABASE_USER"),
         "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+        "OPTIONS": {
+            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
+        },
     }
 }
 
@@ -186,7 +199,7 @@ SPECTACULAR_SETTINGS = {
 }
 
 # cors-headers config
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "http://127.0.0.1:3000",
+#     "http://localhost:3000",
+# ]
