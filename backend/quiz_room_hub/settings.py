@@ -11,9 +11,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
+    "https://aykrimino.github.io",
 ]
 
 ALLOWED_HOSTS = []
@@ -24,6 +26,12 @@ if not os.environ.get("DEBUG", "True").lower() == "true":
     DEBUG = False
     ALLOWED_HOSTS = [os.getenv("RAILWAY_APP_HOST"), "your-app-name.up.railway.app"]
     CORS_ALLOWED_ORIGINS = [os.environ.get("RAILWAY_APP_HOST")]
+
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    SECURE_SSL_REDIRECT = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_BROWSER_XSS_FILTER = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -50,6 +58,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -82,15 +91,12 @@ WSGI_APPLICATION = "quiz_room_hub.wsgi.application"
 # Database
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.mysql",
+        "ENGINE": "django.db.backends.postgresql",
         "NAME": os.environ.get("DATABASE_NAME"),
         "HOST": os.environ.get("DATABASE_HOST"),
         "PORT": os.environ.get("DATABASE_PORT"),
         "USER": os.environ.get("DATABASE_USER"),
         "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
-        "OPTIONS": {
-            "init_command": "SET sql_mode='STRICT_TRANS_TABLES'",
-        },
     }
 }
 
@@ -121,6 +127,8 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -197,9 +205,3 @@ SPECTACULAR_SETTINGS = {
                    "and engage in a rich interactive learning environment. The platform is built using Python, "
                    "Django, and Django Rest Framework, with a MySQL database.",
 }
-
-# cors-headers config
-# CORS_ALLOWED_ORIGINS = [
-#     "http://127.0.0.1:3000",
-#     "http://localhost:3000",
-# ]
