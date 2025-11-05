@@ -9,13 +9,13 @@ services:
       - key: SECRET_KEY
         generateValue: true
       - key: WEB_CONCURRENCY
-        value: 2
+        value: "2"
       - key: DEBUG
         value: "False"
       - key: ALLOWED_HOSTS
-        value: ".onrender.com,aykrimino.github.io"
+        value: ".onrender.com"
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://aykrimino.github.io,http://localhost:3000"
+        value: "https://aykrimino.github.io"
       - key: CORS_ALLOW_ALL_ORIGINS
         value: "False"
       - key: DEVELOPMENT
