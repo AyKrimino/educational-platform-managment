@@ -1,7 +1,7 @@
 import os
 from datetime import timedelta
 from pathlib import Path
-
+import dj_database_url
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -9,24 +9,17 @@ load_dotenv()
 # Build paths inside the project like this: BASE_DIR / "subdir".
 BASE_DIR = Path(__file__).resolve().parent.parent
 
+DEBUG = os.environ.get("DEBUG", "True").lower() == "True"
+
 SECRET_KEY = os.environ.get("SECRET_KEY")
+if not SECRET_KEY and not DEBUG:
+    raise ValueError("SECRET_KEY environment variable must be set in production")
 
 CORS_ALLOW_ALL_ORIGINS = False
-CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
-    "https://aykrimino.github.io",
-]
+CORS_ALLOWED_ORIGINS = os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:3000").split(",") if not DEBUG else ["*"]
+ALLOWED_HOSTS = os.getenv("ALLOWED_HOSTS", ".onrender.com").split(",") if not DEBUG else ["*"]
 
-ALLOWED_HOSTS = []
-
-DEBUG = True
-
-if not os.environ.get("DEBUG", "True").lower() == "true":
-    DEBUG = False
-    ALLOWED_HOSTS = [os.getenv("RAILWAY_APP_HOST"), "your-app-name.up.railway.app"]
-    CORS_ALLOWED_ORIGINS = [os.environ.get("RAILWAY_APP_HOST")]
-
+if not DEBUG:
     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
@@ -89,16 +82,25 @@ TEMPLATES = [
 WSGI_APPLICATION = "quiz_room_hub.wsgi.application"
 
 # Database
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": os.environ.get("DATABASE_NAME"),
-        "HOST": os.environ.get("DATABASE_HOST"),
-        "PORT": os.environ.get("DATABASE_PORT"),
-        "USER": os.environ.get("DATABASE_USER"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD"),
+if os.environ.get("DEVELOPMENT", "False") == "True":
+    DATABASES = {
+        "default": {
+            "ENGINE": "django.db.backends.postgresql",
+            "NAME": os.environ.get("DATABASE_NAME", "quizroom_hub"),
+            "HOST": os.environ.get("DATABASE_HOST", "localhost"),
+            "PORT": os.environ.get("DATABASE_PORT", "5432"),
+            "USER": os.environ.get("DATABASE_USER", "krimino"),
+            "PASSWORD": os.environ.get("DATABASE_PASSWORD", "krimino"),
+        }
     }
-}
+else:
+    DATABASES = {
+        "default": dj_database_url.config(
+            default=os.environ.get("DATABASE_URL"),
+            conn_max_age=600,
+            ssl_require=not DEBUG
+        )
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

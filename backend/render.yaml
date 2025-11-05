@@ -8,10 +8,6 @@ services:
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: DATABASE_URL
-        fromDatabase:
-          name: quizroom-hub-db
-          property: connectionString
       - key: WEB_CONCURRENCY
         value: 2
       - key: DEBUG
@@ -19,9 +15,17 @@ services:
       - key: ALLOWED_HOSTS
         value: ".onrender.com,aykrimino.github.io"
       - key: CORS_ALLOWED_ORIGINS
-        value: "https://aykrimino.github.io"
+        value: "https://aykrimino.github.io,http://localhost:3000"
+      - key: CORS_ALLOW_ALL_ORIGINS
+        value: "False"
+      - key: DEVELOPMENT
+        value: "False"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: quizroom-hub-db
+          property: connectionString
 
-database:
+databases:
   - name: quizroom-hub-db
     databaseName: quizroom_hub
     user: quizroom_hub_user

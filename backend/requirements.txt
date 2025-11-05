@@ -1,6 +1,7 @@
 asgiref==3.8.1
 attrs==23.2.0
 coverage==7.5.3
+dj-database-url==2.2.0
 Django==5.0.6
 django-cors-headers==4.4.0
 django-filter==24.2
