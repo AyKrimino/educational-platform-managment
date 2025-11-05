@@ -3,6 +3,9 @@ from datetime import timedelta
 from pathlib import Path
 import dj_database_url
 from dotenv import load_dotenv
+import logging
+
+logger = logging.getLogger(__name__)
 
 load_dotenv()
 
@@ -83,6 +86,8 @@ WSGI_APPLICATION = "quiz_room_hub.wsgi.application"
 
 # Database
 if os.environ.get("DEVELOPMENT", "False") == "True":
+    logger.info("Using local database configuration")
+
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -94,9 +99,14 @@ if os.environ.get("DEVELOPMENT", "False") == "True":
         }
     }
 else:
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        logger.error("DATABASE_URL environment variable is NOT SET!")
+        logger.error("Available environment variables: %s", ", ".join(os.environ.keys()))
+
     DATABASES = {
         "default": dj_database_url.config(
-            default=os.environ.get("DATABASE_URL"),
+            default=db_url,
             conn_max_age=600,
             ssl_require=not DEBUG
         )
@@ -130,7 +140,9 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+] if os.path.exists(os.path.join(BASE_DIR, 'static')) else []
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
