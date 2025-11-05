@@ -103,12 +103,13 @@ else:
     if not db_url:
         logger.error("DATABASE_URL environment variable is NOT SET!")
         logger.error("Available environment variables: %s", ", ".join(os.environ.keys()))
+        raise ValueError("DATABASE_URL environment variable is not set in production")
 
     DATABASES = {
         "default": dj_database_url.config(
             default=db_url,
             conn_max_age=600,
-            ssl_require=not DEBUG
+            ssl_require=True
         )
     }
 
