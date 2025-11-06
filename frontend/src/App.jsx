@@ -26,7 +26,7 @@ const protectedRoutes = [
 const App = () => {
   return (
     <AuthProvider>
-      <Router>
+      <Router basename={import.meta.env.BASE_URL || "/"}>
         <Routes>
           {/* Public routes for unauthenticated (anonymous) users only */}
           {publicRoutes.map(({ path, component: Component }) => (
