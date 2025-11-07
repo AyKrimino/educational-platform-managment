@@ -58,37 +58,35 @@ class RegisterUserView(APIView):
         """
         Handles POST requests to create a new user.
 
-        Temporary diagnostic version: logs incoming body and any unexpected exception
-        via the logger (logger.exception) so Render/Gunicorn capture the traceback.
+        Uses explicit serializer validation (no raise_exception) so validation errors
+        return structured JSON. Keeps unexpected exception logging as a fallback.
         """
-        # Log request overview and body/data
         try:
             raw_body = request.body.decode("utf-8", errors="replace")
         except Exception:
             raw_body = "<unreadable body>"
 
+        # Log minimal info (logger may be configured at WARNING level in production)
         logger.info("RegisterUserView: incoming request path=%s method=%s", request.path, request.method)
-        logger.info("RegisterUserView: raw_body=%s", raw_body)
-        logger.info("RegisterUserView: parsed request.data=%s", getattr(request, "data", None))
+        logger.debug("RegisterUserView: raw_body=%s", raw_body)
+        logger.debug("RegisterUserView: parsed request.data=%s", getattr(request, "data", None))
+
+        serializer = RegisterUserSerializer(data=request.data)
+        if not serializer.is_valid():
+            # Return structured JSON errors (status 400) so frontend / curl can see exact validation issues
+            logger.info("RegisterUserView: serializer validation failed: %s", serializer.errors)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            serializer = RegisterUserSerializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        except DRFValidationError as exc:
-            # Validation errors: return structured JSON as usual
-            logger.info("RegisterUserView: validation error: %s", exc.detail)
-            return Response(exc.detail, status=status.HTTP_400_BAD_REQUEST)
-
-        except Exception as exc:
-            # Log full traceback so it appears in Render logs
+        except Exception:
+            # Log unexpected exceptions (should be rare now)
             logger.exception("RegisterUserView: unexpected exception during registration")
-            # Return safe JSON so frontend receives structured response
             return Response(
                 {"detail": "Server error during registration (see server logs)."},
-                status=status.HTTP_400_BAD_REQUEST,
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
 
