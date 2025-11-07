@@ -9,6 +9,8 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from datetime import datetime
 from datetime import timezone
 
+import logging
+
 from .serializers import RegisterUserSerializer, LoginUserSerializer, ErrorResponseSerializer
 
 User = get_user_model()
@@ -55,32 +57,36 @@ class RegisterUserView(APIView):
         """
         Handles POST requests to create a new user.
 
-        This version includes temporary debug logging to capture request body and
-        unexpected exceptions for remote debugging on Render (remove debug code after fix).
+        Temporary diagnostic version: logs incoming body and any unexpected exception
+        via the logger (logger.exception) so Render/Gunicorn capture the traceback.
         """
+        # Log request overview and body/data
         try:
-            try:
-                raw_body = request.body.decode("utf-8", errors="replace")
-            except Exception:
-                raw_body = "<unreadable body>"
-            print(f"[DEBUG] RegisterUserView incoming raw body: {raw_body}")
-            print(f"[DEBUG] RegisterUserView incoming parsed data: {getattr(request, 'data', None)}")
+            raw_body = request.body.decode("utf-8", errors="replace")
+        except Exception:
+            raw_body = "<unreadable body>"
 
+        logger.info("RegisterUserView: incoming request path=%s method=%s", request.path, request.method)
+        logger.info("RegisterUserView: raw_body=%s", raw_body)
+        logger.info("RegisterUserView: parsed request.data=%s", getattr(request, "data", None))
+
+        try:
             serializer = RegisterUserSerializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
-        except Exception as e:
-            from rest_framework.exceptions import ValidationError as DRFValidationError
-            if isinstance(exc, DRFValidationError):
-                return Response(exc.detail, status=status.HTTP_400_BAD_REQUEST)
 
-            import traceback
-            print("[ERROR] Exception in RegisterUserView.post():")
-            traceback.print_exc()
+        except DRFValidationError as exc:
+            # Validation errors: return structured JSON as usual
+            logger.info("RegisterUserView: validation error: %s", exc.detail)
+            return Response(exc.detail, status=status.HTTP_400_BAD_REQUEST)
 
+        except Exception as exc:
+            # Log full traceback so it appears in Render logs
+            logger.exception("RegisterUserView: unexpected exception during registration")
+            # Return safe JSON so frontend receives structured response
             return Response(
-                {"detail": "Bad request or server error during registration. See server logs."},
+                {"detail": "Server error during registration (see server logs)."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
