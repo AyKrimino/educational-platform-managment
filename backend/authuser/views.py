@@ -55,24 +55,34 @@ class RegisterUserView(APIView):
         """
         Handles POST requests to create a new user.
 
-        Validates the provided data, ensuring that the email is unique and the passwords
-        match. If valid, creates a new user and returns the user data. If the data is invalid,
-        returns error details.
-
-        Args:
-            request (Request): The HTTP request object containing user registration data.
-
-        Returns:
-            Response: The response containing the created user details or error information.
-
-        Raises:
-            ValidationError: If the data provided for registration is invalid, such as
-            passwords not matching or email not being unique.
+        This version includes temporary debug logging to capture request body and
+        unexpected exceptions for remote debugging on Render (remove debug code after fix).
         """
-        serializer = RegisterUserSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        try:
+            try:
+                raw_body = request.body.decode("utf-8", errors="replace")
+            except Exception:
+                raw_body = "<unreadable body>"
+            print(f"[DEBUG] RegisterUserView incoming raw body: {raw_body}")
+            print(f"[DEBUG] RegisterUserView incoming parsed data: {getattr(request, 'data', None)}")
+
+            serializer = RegisterUserSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            from rest_framework.exceptions import ValidationError as DRFValidationError
+            if isinstance(exc, DRFValidationError):
+                return Response(exc.detail, status=status.HTTP_400_BAD_REQUEST)
+
+            import traceback
+            print("[ERROR] Exception in RegisterUserView.post():")
+            traceback.print_exc()
+
+            return Response(
+                {"detail": "Bad request or server error during registration. See server logs."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
 
 class LoginUserView(APIView):
